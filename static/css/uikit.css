@@ -5164,7 +5164,7 @@ ul.uk-nav-sub {
 /* Container
  ========================================================================== */
 .uk-navbar-container:not(.uk-navbar-transparent) {
-  background: #f8f8f8;
+  background: #95afe1;
 }
 /*
  * Remove pseudo elements created by micro clearfix as precaution (if Container component is used)
@@ -12165,3 +12165,29 @@ iframe.uk-cover {
     page-break-after: avoid;
   }
 }
+/* ========================================================================
+   Component: Info List
+ ========================================================================== */
+.info-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px auto;
+  max-width: 600px;
+}
+
+.info-list li {
+  background-color: #f0f4ff;
+  border: 1px solid #d1d9e6;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-list li:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+

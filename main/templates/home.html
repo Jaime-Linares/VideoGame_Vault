@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %} 
+    <h2> HOME </h2>
+{% endblock %}
+
+{% block contenido %}
+    <p><strong>The information that you have loaded right now:</strong></p>
+    <ul class="info-list">
+        <li>Number of video games: {{video_games}}</li>
+        <li>Number of developers: {{developers}}</li>
+        <li>Number of plataforms: {{plataforms}}</li>
+        <li>Number of stores: {{stores}}</li>
+        <li>Number of genres: {{genres}}</li>
+    </ul>
+{% endblock %}
+
