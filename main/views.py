@@ -66,3 +66,10 @@ def sign_up(request):
 
     return render(request, 'register.html', {'formulario': formulario})
 
+
+# vista para cargar los datos
+@login_required(login_url='/login/')
+def load_data(request):
+    populate()
+    return HttpResponseRedirect('/')
+
