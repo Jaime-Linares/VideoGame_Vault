@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 
-# Modelo para el desarrollador
+# modelo para el desarrollador
 class Developer(models.Model):
     name = models.TextField(unique=True)
 
@@ -14,7 +14,7 @@ class Developer(models.Model):
         ordering = ('name',)
 
 
-# Modelo para el género/características
+# modelo para el género/características
 class Genre(models.Model):
     name = models.TextField(unique=True)
 
@@ -25,7 +25,7 @@ class Genre(models.Model):
         ordering = ('name',)
 
 
-# Modelo para la plataforma
+# modelo para la plataforma
 class Plataform(models.Model):
     name = models.TextField(unique=True)
 
@@ -36,7 +36,7 @@ class Plataform(models.Model):
         ordering = ('name',)
 
 
-# Modelo para la tienda
+# modelo para la tienda
 class Store(models.Model):
     name = models.TextField(unique=True)
 
@@ -47,7 +47,7 @@ class Store(models.Model):
         ordering = ('name',)
 
 
-# Modelo para el videojuego
+# modelo para el videojuego
 class Video_game(models.Model):
     name = models.TextField()
     url_inf = models.URLField()
