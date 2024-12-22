@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
+from main.populateDB import populate
 
 
 
@@ -39,7 +40,7 @@ def sign_in(request):
 
 
 # vista para desloguearse
-@login_required()
+@login_required(login_url='/login/')
 def sign_out(request):
     logout(request)
     return HttpResponseRedirect('/')
