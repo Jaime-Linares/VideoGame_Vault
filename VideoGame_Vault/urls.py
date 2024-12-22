@@ -24,6 +24,9 @@ from main import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home),
+    path('login/', views.sign_in),
+    path('logout/', views.sign_out),
+    path('register/', views.sign_up),
 ]
 
 if settings.DEBUG:

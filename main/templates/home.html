@@ -6,7 +6,12 @@
 {% endblock %}
 
 {% block contenido %}
-    <p><strong>The information that you have loaded right now:</strong></p>
+    {% if request.user.is_authenticated %}
+        <p>Welcome to the video game vault <strong>{{ request.user.username }}</strong>!</p>
+    {% else %}
+        <p>Welcome to the video game vault!</p>
+    {% endif %}
+    <p>The information that you have loaded right now:</p>
     <ul class="info-list">
         <li>Number of video games: {{video_games}}</li>
         <li>Number of developers: {{developers}}</li>

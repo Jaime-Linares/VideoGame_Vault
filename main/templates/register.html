@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %} 
+    <h2> SIGN UP </h2>
+{% endblock %}
+
+{% block contenido %}
+    <form id="formulario" method="POST" action=""> {% csrf_token %}
+        <div class="form-container">
+            <!-- Mostrar errores si existen -->
+            {% if formulario.errors %}
+                <div class="error-container">
+                    <ul>
+                        {% for field in formulario %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in formulario.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <!-- Renderizar el formulario -->
+            {{ formulario.as_p }}
+            <button type="submit" class="btn-submit">Sign up</button>
+        </div>
+    </form>
+{% endblock %}

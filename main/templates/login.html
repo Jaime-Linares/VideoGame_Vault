@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %} 
+    <h2> SIGN IN </h2>
+{% endblock %}
+
+{% block contenido %}
+    <form id="formulario" method="POST" action=""> {% csrf_token %}
+        <div class="form-container">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn-submit">Sign in</button>
+        </div>
+    </form>
+{% endblock %}
+

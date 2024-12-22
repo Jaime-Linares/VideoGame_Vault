@@ -12166,7 +12166,7 @@ iframe.uk-cover {
   }
 }
 /* ========================================================================
-   Component: Info List
+   NEW COMPONENTS
  ========================================================================== */
 .info-list {
   list-style-type: none;
@@ -12189,5 +12189,122 @@ iframe.uk-cover {
 .info-list li:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Contenedor del formulario */
+.form-container {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Estilos para los campos del formulario */
+.form-container label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"],
+.form-container input[type="email"],
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Estilo general para textos de ayuda */
+.form-container .helptext,
+.form-container,
+.form-container .helptext ul,
+.form-container .helptext ul li {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Ajusta el estilo de las listas */
+.form-container .helptext ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Ajusta cada elemento de lista */
+.form-container .helptext ul li {
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Ajusta la alineación del texto */
+.form-container label + .helptext,
+.form-container label + small,
+.form-container label + .helptext ul {
+  margin-top: -5px;
+}
+
+/* Botón de envío */
+.btn-submit {
+  display: block;
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #45a049;
+}
+
+/* Alinear el formulario al centro de la página */
+#formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Estilo para el contenedor de errores */
+.error-container {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.error-container ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.error-container li {
+  margin: 5px 0;
+}
+
+.field-error {
+  color: #842029;
+  margin-top: 5px;
+  font-size: 0.9em;
 }
 
