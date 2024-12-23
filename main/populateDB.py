@@ -21,9 +21,9 @@ def populate():
     Store.objects.all().delete()
     Video_game.objects.all().delete()
 
-    NUM_PAGES = 3
+    NUM_PAGES = 10
     # cargamos los datos desde instant-gaming
-    populate_instant_gaming(3)
+    populate_instant_gaming(NUM_PAGES)
     # cargamos los datos desde eneba
     populate_eneba(3)
 
@@ -61,13 +61,16 @@ def populate_instant_gaming(num_pages):
     store = Store.objects.create(name="Instant Gaming")
     print("START INSTANT GAMING WEB SCRAPPING")
 
-    for pag in range(1, num_pages+1):
-        request = urllib.request.Request(f"https://www.instant-gaming.com/es/busquedas/?page={pag}", headers={'User-Agent': 'Mozilla/5.0'})
+    for page in range(1, num_pages+1):
+        request = urllib.request.Request(f"https://www.instant-gaming.com/es/busquedas/?page={page}", headers={'User-Agent': 'Mozilla/5.0'})
         f = urllib.request.urlopen(request, timeout=3)
         s = BeautifulSoup(f, 'lxml')
         s_video_games = s.find("div", class_="listing-items").find_all("div", class_="force-badge")
 
         for s_video_game in s_video_games:
+            is_dlc = s_video_game.find("span", class_="dlc")
+            if is_dlc and is_dlc.string.strip() == "DLC":   # si es un DLC no lo añadimos porque no es un videojuego sino un contenido descargable
+                continue
             name = str(list(s_video_game.find("div", class_="name").stripped_strings)[-1])
             url_inf = s_video_game.a['href'].strip()
             url_img = s_video_game.find("img", class_="picture")['data-src'].strip()
@@ -77,7 +80,8 @@ def populate_instant_gaming(num_pages):
             s2 = BeautifulSoup(f2, 'lxml')
 
             money = s2.find("div", class_="amount")
-            price = float(money.find("div", class_="total").string.strip().replace("€", "").strip()) if money.find("div", class_="total") else 0.0
+            price_str = money.find("div", class_="total").string.strip() if money.find("div", class_="total") else "0.0"
+            price = float(price_str.encode('utf-8').decode('ascii', 'ignore').replace("€", "").strip())
             discount = int(money.find("div", class_="discounted").string.strip().replace("%", "").replace("-", "").strip()) if money.find("div", class_="discounted") else 0
             s_score = s2.find("div", class_="ig-search-reviews-avg")
             if s_score != None and s_score.string.strip() != "--":
