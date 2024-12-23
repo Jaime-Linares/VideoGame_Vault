@@ -69,11 +69,8 @@ def populate_instant_gaming(num_pages):
 
         for s_video_game in s_video_games:
             name = str(list(s_video_game.find("div", class_="name").stripped_strings)[-1])
-            print(name)
             url_inf = s_video_game.a['href'].strip()
-            print(url_inf)
             url_img = s_video_game.find("img", class_="picture")['data-src'].strip()
-            print(url_img)
 
             request2 = urllib.request.Request(url_inf, headers={'User-Agent': 'Mozilla/5.0'})
             f2 = urllib.request.urlopen(request2)
@@ -81,27 +78,18 @@ def populate_instant_gaming(num_pages):
 
             money = s2.find("div", class_="amount")
             price = float(money.find("div", class_="total").string.strip().replace("€", "").strip()) if money.find("div", class_="total") else 0.0
-            print(price)
             discount = int(money.find("div", class_="discounted").string.strip().replace("%", "").replace("-", "").strip()) if money.find("div", class_="discounted") else 0
-            print(discount)
-            print(s2.find("div", class_="ig-search-reviews-avg"))
             s_score = s2.find("div", class_="ig-search-reviews-avg")
             if s_score != None and s_score.string.strip() != "--":
                 score = float(s_score.string.strip())
             else:
                 score = 0.0
-            print(score)
             s_description = s2.find("div", class_="readable")
             description = "".join(list(s_description.stripped_strings)) if s_description else ""
-            print(description)
             release_date = datetime.strptime(s2.find("div", class_="release-date").get_text().split(" -")[0].strip(), "%d %B %Y") if s2.find("div", class_="release-date") else None
-            print(release_date)
             developer, dic_developers = get_developer_instant_gaming(s2, dic_developers)
-            print(developer)
             video_games_genres, total_genres = get_genres_instant_gaming(s2, total_genres)
-            print(video_games_genres)
             plataform, dic_plataforms = get_plataform_instant_gaming(s2, dic_plataforms)
-            print(plataform)
 
             video_games_list, dic_genres = create_video_game(name, url_inf, url_img, price, discount, score, description, release_date, developer, 
                                                             video_games_genres, dic_genres, plataform, store, video_games_list)
@@ -127,17 +115,21 @@ def get_developer_instant_gaming(s2, dic_developers):
 
 # función auxiliar para obtener los géneros de un videojuego
 def get_genres_instant_gaming(s2, total_genres):
+    video_games_genres = []
+
     s_genres = s2.find("div", class_="table-cell", string="Género:")
     if s_genres:
         s_genres = s_genres.next_sibling.next_sibling
-        genres = list(s_genres.find_all("a"))
-    else:
-        genres = []
+        for a in s_genres.find_all("a"):
+            genre = str(a.string.strip()).lower()
+            video_games_genres.append(genre)
+    s_features_genres = s2.find_all("span", class_="feature-text")
+    if s_features_genres:
+        for s_feature_genre in s_features_genres:
+            if s_feature_genre.string.strip() not in video_games_genres:
+                video_games_genres.append(s_feature_genre.string.strip().lower())
 
-    video_games_genres = []
-    for a in genres:
-        genre = str(a.string.strip()).lower()
-        video_games_genres.append(genre)
+    for genre in video_games_genres:
         if genre not in total_genres:
             total_genres.append(genre)
     return video_games_genres, total_genres
