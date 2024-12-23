@@ -2,12 +2,12 @@
 
 
 {% block titulo %} 
-    <h2> HOME </h2>
+    <h2>🕹️ HOME 🕹️</h2>
 {% endblock %}
 
 {% block contenido %}
     {% if request.user.is_authenticated %}
-        <p>Welcome to the video game vault <strong>{{ request.user.username }}</strong>!</p>
+        <p>Welcome to the video game vault <strong>✨ {{ request.user.username }} ✨</strong>!</p>
     {% else %}
         <p>Welcome to the video game vault!</p>
     {% endif %}
