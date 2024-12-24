@@ -12308,3 +12308,42 @@ iframe.uk-cover {
   font-size: 0.9em;
 }
 
+
+/* JUEGOS */
+.video-games-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.video-game-card {
+  display: flex;
+  width: 45%;
+  border: 1px solid #aaa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  background-color: #e0e0e0;
+}
+
+.video-game-image img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.video-game-info {
+  margin-left: 20px;
+  text-align: center;
+  flex: 1;
+  font-size: 1em;
+}
+
+.video-game-info h3 {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: underline;
+}
+

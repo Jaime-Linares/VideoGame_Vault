@@ -33,7 +33,7 @@
 
             h2 {
                 margin-top: 20px;
-                font-size: 1.5em;
+                font-size: 2em;
                 color: #2a2a72;
                 background-color: rgba(184, 191, 219, 0.7);
                 padding: 10px 20px;
@@ -202,13 +202,7 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="uk-active"><a href="#">All games</a>
-                        <div class="uk-navbar-dropdown">
-                            <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li><a href="/">Home</a></li>
-                            </ul>
-                        </div>
-                    </li>
+                    <li class="uk-active"><a href="/all_video_games/">All video games</a></li>
                     {% if request.user.is_authenticated %}
                         <li class="uk-active"><a href="/logout/">Sign Out</a></li>
                     {% else %}

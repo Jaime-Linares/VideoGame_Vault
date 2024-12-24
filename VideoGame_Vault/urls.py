@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', views.sign_out),
     path('register/', views.sign_up),
     path('populateDB/', views.load_data),
+    path('all_video_games/', views.show_all_video_games),
 ]
 
 if settings.DEBUG:

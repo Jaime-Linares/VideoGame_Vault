@@ -73,3 +73,9 @@ def load_data(request):
     populate()
     return HttpResponseRedirect('/')
 
+
+# vista para mostrar todos los juegos
+def show_all_video_games(request):
+    video_games = Video_game.objects.all()
+    return render(request, 'all_video_games.html', {'video_games':video_games})
+
