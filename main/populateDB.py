@@ -1,8 +1,9 @@
 # encoding:utf-8
 from main.models import Developer, Genre, Plataform, Store, Video_game
 from bs4 import BeautifulSoup
-import os, ssl, urllib.request, locale
+import os, ssl, urllib.request, locale, time
 from datetime import datetime
+from urllib.error import HTTPError
 # lineas para evitar error SSL
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
@@ -21,11 +22,18 @@ def populate():
     Store.objects.all().delete()
     Video_game.objects.all().delete()
 
-    NUM_PAGES = 10
+    # important variables
+    NUM_PAGES_INSTANT_GAMING = 5
+    NUM_PAGES_ENEBA = 1
+    dic_developers = {}
+    total_genres = []
+    dic_genres = {}
+    dic_plataforms = {}
     # cargamos los datos desde instant-gaming
-    populate_instant_gaming(NUM_PAGES)
+    populate_instant_gaming(NUM_PAGES_INSTANT_GAMING, dic_developers, total_genres, dic_genres, dic_plataforms)
     # cargamos los datos desde eneba
-    populate_eneba(3)
+    populate_eneba(NUM_PAGES_ENEBA, dic_developers, total_genres, dic_genres, dic_plataforms)
+    print("FINISH POPULATE DATABASE")
 
 
 # función auxiliar para tener los juegos en una lista y los generos de cada juego en un diccionario
@@ -52,12 +60,8 @@ def create_video_games(video_games_list, dic_genres, total_genres, store):
 
 
 # --- FUNCIONES INSTANT-GAMING ---------------------------------------------------------------------------------------------
-def populate_instant_gaming(num_pages):
+def populate_instant_gaming(num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
     video_games_list = []
-    dic_genres = {}
-    total_genres = []
-    dic_developers = {}
-    dic_plataforms = {}
     store = Store.objects.create(name="Instant Gaming")
     print("START INSTANT GAMING WEB SCRAPPING")
 
@@ -156,7 +160,101 @@ def get_plataform_instant_gaming(s2, dic_plataforms):
 
 
 # --- FUNCIONES ENEBA ------------------------------------------------------------------------------------------------------
-def populate_eneba(num_pages):
-    return None
+def populate_eneba(num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
+    video_games_list = []
+    eneba_total_genres = []
+    store = Store.objects.create(name="Eneba")
+    print("START ENEBA WEB SCRAPPING")
+
+    for page in range(1, num_pages+1):
+        request = urllib.request.Request(f"https://www.eneba.com/es/store/games?page={page}&platforms[]=BETHESDA&platforms[]=BLIZZARD&platforms[]=EPIC_GAMES&platforms[]=GOG&platforms[]=ORIGIN&platforms[]=OTHER&platforms[]=STEAM&platforms[]=UPLAY&regions[]=global&sortBy=POPULARITY_DESC&types[]=game", 
+                                         headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'})
+        f = urllib.request.urlopen(request, timeout=3)
+        s = BeautifulSoup(f, 'lxml')
+        s_video_games = s.find("div", class_="JZCH_t").find_all("div", class_="WpvaUk")
+
+        for s_video_game in s_video_games:
+            name = s_video_game.find("div", class_="lirayz").text.strip()
+            url_inf = "https://www.eneba.com" + s_video_game.a['href'].strip()
+            url_img = s_video_game.img['src'].strip()
+            money = s_video_game.find("div", class_="Lyw0wM")
+            price_parse = money.find("span", class_="L5ErLT").string.split(",") if money else ["0", "00"]
+            price = float(price_parse[0] + "." + price_parse[1][:2])
+            discount_str = money.find("div", class_="PIG8fA")
+            discount = int(discount_str.string.split(" ")[1].replace("%", "").strip()) if discount_str else 0
+
+            request2 = urllib.request.Request(url_inf, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'})
+            try:
+                f2 = urllib.request.urlopen(request2, timeout=3)
+            except HTTPError as e:
+                if e.code == 429:  # too many requests error
+                    print("Too many request. Waiting before trying again...")
+                    time.sleep(10)  # esperar 10 segundos
+                    f2 = urllib.request.urlopen(request2, timeout=3)
+                else:
+                    raise
+            s2 = BeautifulSoup(f2, 'lxml')
+
+            s_score = s2.find("div", class_="mMO4Vf").text.strip() if s2.find("div", class_="mMO4Vf") else "0.0"
+            score = float(s_score) * 2          # multiplicamos por 2 para que este en una escala sobre 10
+            s_description = s2.find("div", class_="tq3wly")
+            description = "".join(list(s_description.stripped_strings)) if s_description else ""
+            s_release_date = s2.find("div", class_="URplpg", string="Fecha de lanzamiento").next_sibling
+            release_date = datetime.strptime(str(s_release_date.string.strip()), '%d de %B de %Y') if s_release_date else None
+            developer, dic_developers = get_developer_eneba(s2, dic_developers)
+            video_games_genres, eneba_total_genres = get_genres_eneba(s2, eneba_total_genres)
+            plataform, dic_plataforms = get_plataform_eneba(s2, dic_plataforms)
+            
+            video_games_list, dic_genres = create_video_game(name, url_inf, url_img, price, discount, score, description, release_date, developer, 
+                                                            video_games_genres, dic_genres, plataform, store, video_games_list)
+    
+    create_video_games(video_games_list, dic_genres, [genre for genre in eneba_total_genres if genre not in total_genres], store)
+    print("FINISH ENEBA WEB SCRAPPING")
+
+
+# función auxiliar para obtener el desarrollador de un videojuego
+def get_developer_eneba(s2, dic_developers):
+    s_developer = s2.find("div", class_="URplpg", string="Desarrolladores")
+    if s_developer:
+        developer_string = s_developer.next_sibling.string.strip()
+    else:
+        developer_string = "Unknown"
+
+    if developer_string not in dic_developers:
+        developer = Developer.objects.create(name=developer_string)
+        dic_developers[developer_string] = developer
+    developer = dic_developers[developer_string]
+    return developer, dic_developers
+
+
+# función auxiliar para obtener los géneros de un videojuego
+def get_genres_eneba(s2, eneba_total_genres):
+    video_games_genres = []
+
+    s_genres = s2.find("ul",class_="aoHRvN")
+    if s_genres:
+        for li in s_genres:
+            genre = str(list(li.stripped_strings)[0]).lower()
+            video_games_genres.append(genre)
+
+    for genre in video_games_genres:
+        if genre not in eneba_total_genres:
+            eneba_total_genres.append(genre)
+    return video_games_genres, eneba_total_genres
+
+
+# función auxiliar para obtener la plataforma de un videojuego
+def get_plataform_eneba(s2, dic_plataforms):
+    s_plataform = list(s2.find_all("strong",class_="cEhl9f"))[1]
+    if s_plataform:
+        plataform_string = str(s_plataform.string.strip()).lower()
+    else:
+        plataform_string = "Unknown"
+    
+    if plataform_string not in dic_plataforms:
+        plataform = Plataform.objects.create(name=plataform_string)
+        dic_plataforms[plataform_string] = plataform
+    plataform = dic_plataforms[plataform_string]
+    return plataform, dic_plataforms
 
 
