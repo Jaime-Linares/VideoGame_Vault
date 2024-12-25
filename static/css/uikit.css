@@ -12317,9 +12317,15 @@ iframe.uk-cover {
   gap: 20px;
 }
 
+.video-game-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 45%;
+}
+
 .video-game-card {
   display: flex;
-  width: 45%;
   height: 200px;
   border: 1px solid #aaa;
   padding: 15px;
@@ -12327,11 +12333,16 @@ iframe.uk-cover {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   align-items: center;
   background-color: #e0e0e0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.video-game-card:hover {
+  transform: scale(1.03);
 }
 
 .video-game-image img {
   width: 300px;
-  height: 175px;
+  height: 180px;
   border-radius: 8px;
 }
 

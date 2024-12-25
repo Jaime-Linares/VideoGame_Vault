@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from main.models import Developer, Genre, Plataform, Store, Video_game
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
@@ -74,8 +74,14 @@ def load_data(request):
     return HttpResponseRedirect('/')
 
 
-# vista para mostrar todos los juegos
+# vista para mostrar todos los videojuegos
 def show_all_video_games(request):
     video_games = Video_game.objects.all()
     return render(request, 'all_video_games.html', {'video_games':video_games})
+
+
+# vista para mostrar los detalles de un videojuego
+def show_video_game(request, video_game_id):
+    video_game = get_object_or_404(Video_game, pk=video_game_id)
+    return render(request, 'video_game.html', {'video_game':video_game})
 

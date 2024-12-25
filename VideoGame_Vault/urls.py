@@ -29,6 +29,7 @@ urlpatterns = [
     path('register/', views.sign_up),
     path('populateDB/', views.load_data),
     path('all_video_games/', views.show_all_video_games),
+    path('video_game/<int:video_game_id>/', views.show_video_game, name='video_game_detail'),
 ]
 
 if settings.DEBUG:

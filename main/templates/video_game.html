@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %} 
+    <h2> {{video_game.name}} </h2>
+{% endblock %}
+
+{% block contenido %}
+    <p>{{video_game.price}}</p>
+    <p>{{video_game.release_date}}</p>
+    <p>{{video_game.description}}</p>
+{% endblock %}
