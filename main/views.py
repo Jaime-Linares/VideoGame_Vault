@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
+from main.forms import GenreSelectionForm
 
 
 
@@ -86,4 +87,19 @@ def show_video_game(request, video_game_id):
     video_game = get_object_or_404(Video_game, pk=video_game_id)
     video_games_recommended = Video_game.objects.all()[:4]  # cambiar por el SR basado en contenido
     return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})
+
+
+# vista para mostrar los videojuegos que son de un género específico
+def show_video_games_selected_genre(request):
+    formulario = GenreSelectionForm()
+    video_games = None
+    genre = None
+    
+    if request.method=='POST':
+        formulario = GenreSelectionForm(request.POST)
+        if formulario.is_valid():
+            genre = formulario.cleaned_data['genre']
+            video_games = genre.video_game_set.all()
+            
+    return render(request, 'video_games_selected_genre.html', {'formulario':formulario, 'video_games':video_games, 'genre':genre})
 
