@@ -80,9 +80,10 @@ def show_all_video_games(request):
     return render(request, 'all_video_games.html', {'video_games':video_games})
 
 
-# vista para mostrar los detalles de un videojuego
+# vista para mostrar los detalles de un videojuego y sus videojuegos recomendados según su parecido
+# utilizando el SR basado en contenido
 def show_video_game(request, video_game_id):
     video_game = get_object_or_404(Video_game, pk=video_game_id)
-    video_games_recommended = Video_game.objects.all()[:4]
+    video_games_recommended = Video_game.objects.all()[:4]  # cambiar por el SR basado en contenido
     return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})
 
