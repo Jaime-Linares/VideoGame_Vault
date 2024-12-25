@@ -32,6 +32,7 @@ urlpatterns = [
     path('video_game/<int:video_game_id>/', views.show_video_game, name='video_game_detail'),
     path('video_games_selected_developer/', views.show_video_games_selected_developer),
     path('video_games_selected_genre/', views.show_video_games_selected_genre),
+    path('video_games_selected_plataform/', views.show_video_games_selected_plataform),
 ]
 
 if settings.DEBUG:

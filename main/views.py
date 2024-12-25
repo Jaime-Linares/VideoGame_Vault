@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm
 
 
 
@@ -117,4 +117,19 @@ def show_video_games_selected_developer(request):
             video_games = Video_game.objects.filter(developer=developer)
             
     return render(request, 'video_games_selected_developer.html', {'formulario':formulario, 'video_games':video_games, 'developer':developer})
+
+
+# vista para mostrar los videojuegos que son de una plataforma específica
+def show_video_games_selected_plataform(request):
+    formulario = PlataformSelectionForm()
+    video_games = None
+    plataform = None
+    
+    if request.method=='POST':
+        formulario = PlataformSelectionForm(request.POST)
+        if formulario.is_valid():
+            plataform = formulario.cleaned_data['plataform']
+            video_games = Video_game.objects.filter(plataform=plataform)
+            
+    return render(request, 'video_games_selected_plataform.html', {'formulario':formulario, 'video_games':video_games, 'plataform':plataform})
 

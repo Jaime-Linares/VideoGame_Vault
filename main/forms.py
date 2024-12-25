@@ -1,5 +1,5 @@
 from django import forms
-from main.models import Genre, Developer
+from main.models import Genre, Developer, Plataform, Video_game, Store
 
 
 
@@ -19,6 +19,16 @@ class DeveloperSelectionForm(forms.Form):
         queryset=Developer.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="Choose a developer",
+        required=True
+    )
+
+
+# formulario para seleccionar una plataforma
+class PlataformSelectionForm(forms.Form):
+    plataform = forms.ModelChoiceField(
+        queryset=Plataform.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Choose a plataform",
         required=True
     )
 

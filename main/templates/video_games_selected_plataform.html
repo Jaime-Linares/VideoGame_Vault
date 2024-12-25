@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %}
+    <h2>🔍 Search video games by selected plataform 🔍</h2>
+{% endblock %}
+
+{% block contenido %}
+    <form id="formulario" method="POST" action=""> {% csrf_token %}
+        <div class="form-container">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn-submit">Search</button>
+        </div>
+    </form>
+
+    <hr>
+    <hr>
+
+    {% if plataform %}
+        <h3> Total number of video games using plataform <strong>{{plataform}}</strong>: {{video_games|length}}</h3>
+    {% endif %}
+
+    <div class="video-games-container">
+        {% for game in video_games %}
+            <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
+                <div class="video-game-card">
+                    <div class="video-game-image">
+                        <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                    </div>
+
+                    <div class="video-game-info">
+                        <h3>{{ game.name }}</h3>
+                        <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                        <p><strong>Store:</strong> {{ game.store.name }}</p>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <h3>😜 Don't be shy! Choose a plataform 😜</h3>
+        {% endfor %}
+    </div>
+{% endblock %}
+
