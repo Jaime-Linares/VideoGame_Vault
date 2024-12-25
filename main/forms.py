@@ -32,4 +32,14 @@ class PlataformSelectionForm(forms.Form):
         required=True
     )
 
-    
+
+# formulario para seleccionar una tienda
+class StoreSelectionForm(forms.Form):
+    store = forms.ModelChoiceField(
+        queryset=Store.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Choose a store",
+        required=True
+    )
+
+   

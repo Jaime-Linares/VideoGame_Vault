@@ -33,16 +33,19 @@
                                 <li><a href="/video_games_selected_developer/">Search video games by developer</a></li>
                                 <li><a href="/video_games_selected_genre/">Search video games by genre</a></li>
                                 <li><a href="/video_games_selected_plataform/">Search video games by plataform</a></li>
+                                <li><a href="/video_games_selected_store/">Search video games by store</a></li>
                             </ul>
                         </div>
                     </li>
-                    <li class="uk-active"><a href="#">Advanced searches</a>
-                        <div class="uk-navbar-dropdown">
-                            <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li><a href="/">Home</a></li>
-                            </ul>
-                        </div>
-                    </li>
+                    {% if request.user.is_authenticated %}
+                        <li class="uk-active"><a href="#">Advanced searches</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a href="/">Home</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
                     <li class="uk-active"><a href="/all_video_games/">All video games</a></li>
                     {% if request.user.is_authenticated %}
                         <li class="uk-active"><a href="/logout/">Sign Out</a></li>

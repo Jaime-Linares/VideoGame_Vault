@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm
 
 
 
@@ -132,4 +132,19 @@ def show_video_games_selected_plataform(request):
             video_games = Video_game.objects.filter(plataform=plataform)
             
     return render(request, 'video_games_selected_plataform.html', {'formulario':formulario, 'video_games':video_games, 'plataform':plataform})
+
+
+# vista para mostrar los videojuegos que son de una tienda específica
+def show_video_games_selected_store(request):
+    formulario = StoreSelectionForm()
+    video_games = None
+    store = None
+    
+    if request.method=='POST':
+        formulario = StoreSelectionForm(request.POST)
+        if formulario.is_valid():
+            store = formulario.cleaned_data['store']
+            video_games = Video_game.objects.filter(store=store)
+            
+    return render(request, 'video_games_selected_store.html', {'formulario':formulario, 'video_games':video_games, 'store':store})
 
