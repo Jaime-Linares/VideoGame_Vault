@@ -6,7 +6,88 @@
 {% endblock %}
 
 {% block contenido %}
-    <p>{{video_game.price}}</p>
-    <p>{{video_game.release_date}}</p>
-    <p>{{video_game.description}}</p>
+    <div class="video-game-detail-container">
+        <div class="video-game-detail-image">
+            <img src="{{ video_game.url_img }}" alt="{{ video_game.name }}">
+        </div>
+        <div class="video-game-detail-info">
+            <h3>
+                <strong>Price:</strong> 
+                {% if video_game.price == 0.0 %}
+                    Not available
+                {% else %}
+                    {{ video_game.price }} €
+                {% endif %}
+            </h3>
+            {% if video_game.discount > 0 %}
+                <p><strong>Discount:</strong> {{ video_game.discount }}%</p>
+            {% endif %}
+            <p>
+                <strong>Score:</strong> 
+                {% if video_game.score == 0 %}
+                    Not yet rated - <a href="{{ video_game.url_inf }}">Rate this game</a>
+                {% else %}
+                    {{ video_game.score }} / 10.0
+                {% endif %}
+            </p>
+            <p>
+                <strong>Release Date:</strong> 
+                {% if video_game.release_date %}
+                    {{ video_game.release_date|date:"F j, Y" }}
+                {% else %}
+                    Not available
+                {% endif %}
+            </p>
+            <p><strong>Developer:</strong> {{ video_game.developer.name }}</p>
+            <p><strong>Genres:</strong> 
+                <div class="genres-container">
+                    {% for genre in video_game.genres.all %}
+                        <span class="genre-tag">{{ genre.name }}</span>
+                    {% empty %}
+                        <span class="genre-tag">Not specified</span>
+                    {% endfor %}
+                </div>
+            </p>
+            <p>
+                <strong>Platform:</strong> 
+                {% if video_game.plataform %}
+                    {{ video_game.plataform.name }}
+                {% else %}
+                    Not specified
+                {% endif %}
+            </p>
+            <p><strong>Store:</strong> {{ video_game.store.name }}</p>
+            <p>
+                <strong>Description:</strong> 
+                {% if video_game.description %}
+                    {{ video_game.description }}
+                {% else %}
+                    No description available
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="recommended-games-container">
+        <h2>💡 Recommended Games 💡</h2>
+        <div class="recommended-games-grid new-recommended-games-grid">
+            {% for game in video_games_recommended %}
+                <a href="{% url 'video_game_detail' game.id %}" class="new-recommended-game-link">
+                    <div class="new-recommended-game-card">
+                        <div class="new-recommended-game-image">
+                            <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                        </div>
+                        <div class="new-recommended-game-info">
+                            <h3>{{ game.name }}</h3>
+                            <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                            <p><strong>Store:</strong> {{ game.store.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                <h3>😟 No video games available 😟</h3>
+                <h3>Don't worry! Sign in and load the data</h3>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

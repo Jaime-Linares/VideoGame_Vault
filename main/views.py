@@ -83,5 +83,6 @@ def show_all_video_games(request):
 # vista para mostrar los detalles de un videojuego
 def show_video_game(request, video_game_id):
     video_game = get_object_or_404(Video_game, pk=video_game_id)
-    return render(request, 'video_game.html', {'video_game':video_game})
+    video_games_recommended = Video_game.objects.all()[:4]
+    return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})
 
