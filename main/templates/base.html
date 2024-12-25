@@ -5,176 +5,15 @@
 <html lang='es'>
     <head>
         <meta charset='utf-8'>
-        <title>VideoGame Vault</title>
+        <title>Video Game Vault</title>
         <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
         <link rel="stylesheet" href="{% static 'css/uikit.css' %}"/>
         <script src="{% static 'js/jquery.min.js' %}"></script>
-        <script src="{% static 'js/uikit.min.js' %}"></script>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #ebecfc;
-                color: #333333;
-                margin: 0;
-                padding: 0;
-                text-align: center;
-            }
-        
-            h1 {
-                margin-top: 20px;
-                font-size: 4em;
-                color: #2a2a72;
-                background-color: rgba(184, 191, 219, 0.7);
-                text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-                padding: 10px 20px;
-                border-radius: 10px;
-                display: inline-block;
-            }
-
-            h2 {
-                margin-top: 20px;
-                font-size: 2em;
-                color: #2a2a72;
-                background-color: rgba(184, 191, 219, 0.7);
-                padding: 10px 20px;
-                border-radius: 10px;
-                display: inline-block;
-            }
-        
-            nav {
-                background: linear-gradient(45deg, #6a11cb, #2575fc); 
-                padding: 10px 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        
-            nav ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                display: flex;
-                justify-content: center;
-            }
-        
-            nav li {
-                margin: 0 15px;
-                position: relative;
-            }
-
-            li.uk-active a {
-                font-size: 18px;
-                color: #ffffff;
-                font-weight: 500;
-            }
-        
-            nav a {
-                color: #ffffff;
-                text-decoration: none;
-                font-size: 2em;
-                padding: 5px 10px;
-                transition: background 0.3s, color 0.3s;
-            }
-        
-            nav a:hover {
-                background: rgba(255, 255, 255, 0.5);
-                color: #ff7f50;
-                border-radius: 5px;
-            }
-        
-            .uk-navbar-dropdown {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(209, 217, 230, 0.8);
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-                border-radius: 6px;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-                transition: all 0.3s ease;
-                z-index: 1000;
-                padding: 5px 10px;
-                width: 150px;
-            }
-        
-            nav li:hover .uk-navbar-dropdown {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-        
-            .uk-navbar-dropdown ul {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-        
-            .uk-navbar-dropdown li {
-                padding: 5px 0;
-            }
-        
-            .uk-navbar-dropdown li a {
-                color: #3a3f58;
-                text-decoration: none;
-                font-size: 0.9em;
-                padding: 2px 5px;
-                transition: color 0.3s, background 0.3s;
-                border-radius: 4px;
-            }
-        
-            .uk-navbar-dropdown li a:hover {
-                color: #ffffff;
-                background: rgba(30, 18, 53, 0.8);
-            }
-        
-            section {
-                margin: 10px auto 40px;
-                padding: 20px;
-                background: rgba(213, 217, 235, 0.7);
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-                border-radius: 10px;
-                text-align: center;
-            }
-        
-            hr {
-                border: 0;
-                height: 1px;
-                background: rgba(221, 221, 221, 0.8);
-                margin: 20px 0;
-            }
-        
-            footer {
-                margin-top: 40px;
-                padding: 20px;
-                background-color: rgba(213, 217, 235, 0.7);
-                color: #ffffff;
-                text-align: center;
-            }
-        
-            footer a {
-                color: #ffffff;
-                text-decoration: none;
-                font-size: 1.5em;
-                transition: color 0.3s;
-            }
-        
-            footer a:hover {
-                color: #ff7f50;
-            }
-        
-            .footer-icon {
-                font-size: 2em;
-                margin: 0 10px;
-                display: inline-block;
-                vertical-align: middle;
-            }
-        </style> 
+        <script src="{% static 'js/uikit.min.js' %}"></script> 
     </head>
 
     <body>
-        <h1>🎮👾 VIDEOGAME VAULT 👾🎮</h1>
+        <h1>🎮👾 VIDEO GAME VAULT 👾🎮</h1>
         <nav class="uk-navbar-container" uk-navbar>
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
@@ -191,7 +30,7 @@
                     <li class="uk-active"><a href="#">Searches</a>
                         <div class="uk-navbar-dropdown">
                             <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li><a href="/">Home</a></li>
+                                
                             </ul>
                         </div>
                     </li>
