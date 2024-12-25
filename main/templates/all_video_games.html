@@ -6,23 +6,23 @@
 {% endblock %}
 
 {% block contenido %}
-<div class="video-games-container">
-    {% for game in video_games %}
-    <div class="video-game-card">
-        <div class="video-game-image">
-            <img src="{{ game.url_img }}" alt="{{ game.name }}">
-        </div>
+    <div class="video-games-container">
+        {% for game in video_games %}
+            <div class="video-game-card">
+                <div class="video-game-image">
+                    <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                </div>
 
-        <div class="video-game-info">
-            <h3>{{ game.name }}</h3>
-            <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
-            <p><strong>Store:</strong> {{ game.store.name }}</p>
-        </div>
+                <div class="video-game-info">
+                    <h3>{{ game.name }}</h3>
+                    <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                    <p><strong>Store:</strong> {{ game.store.name }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <h3>😟 No video games available 😟</h3>
+            <h3>Don't worry! Sign in and load the data</h3>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>😟 No video games available 😟</p>
-    <p>Don't worry! Sign in and load the data</p>
-    {% endfor %}
-</div>
 {% endblock %}
 
