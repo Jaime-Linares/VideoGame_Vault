@@ -12320,6 +12320,7 @@ iframe.uk-cover {
 .video-game-card {
   display: flex;
   width: 45%;
+  height: 200px;
   border: 1px solid #aaa;
   padding: 15px;
   border-radius: 8px;
@@ -12330,7 +12331,7 @@ iframe.uk-cover {
 
 .video-game-image img {
   width: 300px;
-  height: auto;
+  height: 175px;
   border-radius: 8px;
 }
 
