@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm
+from main.forms import GenreSelectionForm, DeveloperSelectionForm
 
 
 
@@ -102,4 +102,19 @@ def show_video_games_selected_genre(request):
             video_games = genre.video_game_set.all()
             
     return render(request, 'video_games_selected_genre.html', {'formulario':formulario, 'video_games':video_games, 'genre':genre})
+
+
+# vista para mostrar los videojuegos que son de un desarrollador específico
+def show_video_games_selected_developer(request):
+    formulario = DeveloperSelectionForm()
+    video_games = None
+    developer = None
+    
+    if request.method=='POST':
+        formulario = DeveloperSelectionForm(request.POST)
+        if formulario.is_valid():
+            developer = formulario.cleaned_data['developer']
+            video_games = Video_game.objects.filter(developer=developer)
+            
+    return render(request, 'video_games_selected_developer.html', {'formulario':formulario, 'video_games':video_games, 'developer':developer})
 
