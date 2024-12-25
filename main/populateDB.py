@@ -9,7 +9,10 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
+# para establecer el idioma de las fechas
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+# para traducir ciertos géneros
+genre_traductor = {"aventuras":"aventura","cooperativo online":"cooperativo en línea","indie":"indies","un solo jugador":"un jugador"}
 
 
 
@@ -136,6 +139,11 @@ def get_genres_instant_gaming(s2, total_genres):
         for s_feature_genre in s_features_genres:
             if s_feature_genre.string.strip() not in video_games_genres:
                 video_games_genres.append(s_feature_genre.string.strip().lower())
+    # traducimos los géneros
+    i = 0
+    for i in range(len(video_games_genres)):
+        if video_games_genres[i] in genre_traductor:
+            video_games_genres[i] = genre_traductor[video_games_genres[i]]
 
     for genre in video_games_genres:
         if genre not in total_genres:
@@ -236,6 +244,11 @@ def get_genres_eneba(s2, eneba_total_genres):
         for li in s_genres:
             genre = str(list(li.stripped_strings)[0]).lower()
             video_games_genres.append(genre)
+    # traducimos los géneros
+    i = 0
+    for i in range(len(video_games_genres)):
+        if video_games_genres[i] in genre_traductor:
+            video_games_genres[i] = genre_traductor[video_games_genres[i]]
 
     for genre in video_games_genres:
         if genre not in eneba_total_genres:
