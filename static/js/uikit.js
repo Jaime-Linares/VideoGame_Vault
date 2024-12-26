@@ -3555,15 +3555,6 @@
 
     }
 
-    function swipeDirection(x1, y1, x2, y2) {
-        return Math.abs(x1 - x2) >= Math.abs(y1 - y2)
-            ? x1 - x2 > 0
-                ? 'Left'
-                : 'Right'
-            : y1 - y2 > 0
-                ? 'Up'
-                : 'Down';
-    }
 
     function boot (UIkit) {
 
@@ -4151,14 +4142,6 @@
         }
 
     };
-
-    function getPositionedParent(el) {
-        while ((el = parent(el))) {
-            if (css(el, 'position') !== 'static') {
-                return el;
-            }
-        }
-    }
 
     var Container = {
 
