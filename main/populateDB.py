@@ -1,18 +1,27 @@
 # encoding:utf-8
 from main.models import Developer, Genre, Plataform, Store, Video_game
 from bs4 import BeautifulSoup
-import os, ssl, urllib.request, locale, time
+import os, ssl, urllib.request, locale, time, shutil
 from datetime import datetime
 from urllib.error import HTTPError
+from whoosh.index import create_in, open_dir
+from whoosh.fields import Schema, TEXT, DATETIME, KEYWORD, ID, NUMERIC
 # lineas para evitar error SSL
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
+
+# --- VARIABLES GLOBALES ---------------------------------------------------------------------------------------------------
 # para establecer el idioma de las fechas
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+
 # para traducir ciertos géneros
-genre_traductor = {"aventuras":"aventura","cooperativo online":"cooperativo en línea","indie":"indies","un solo jugador":"un jugador"}
+genre_traductor = {"aventuras":"aventura","cooperativo online":"cooperativo en línea","indie":"indies","un solo jugador":"un jugador", 
+                   "fps":"fps / tps", "pr√©stamo familiar":"préstamo familiar", "cooperativo en l√≠nea":"cooperativo en línea"}
+
+# dirección para almacenar el índice
+dir_index = "Index"
 
 
 
@@ -25,18 +34,31 @@ def populate():
     Store.objects.all().delete()
     Video_game.objects.all().delete()
 
-    # important variables
-    NUM_PAGES_INSTANT_GAMING = 5
-    NUM_PAGES_ENEBA = 1
+    # creamos el esquema de whoosh, eliminamos el directorio del índice si existe y creamos el índice
+    schema = Schema(name=TEXT(stored=True, phrase=True), url_inf=ID(stored=True, unique=True), price=NUMERIC(stored=True, numtype=float),
+                    discount=NUMERIC(stored=True, numtype=int), score=NUMERIC(stored=True, numtype=float), description=TEXT(stored=True, phrase=True),
+                    release_date=DATETIME(stored=True), developer=TEXT(stored=True, phrase=True), genres=KEYWORD(stored=True, commas=True, lowercase=True),
+                    plataform=TEXT(stored=True, phrase=True), store=TEXT(stored=True, phrase=True))
+    
+    if os.path.exists(dir_index):
+        shutil.rmtree(dir_index)
+    os.mkdir(dir_index)
+
+    ix = create_in(dir_index, schema=schema)
+
+    # variables importantes
+    NUM_PAGES_INSTANT_GAMING = 10
+    NUM_PAGES_ENEBA = 2    # se recomienda no poner más de 1 o 2 porque eneba bloquea las peticiones (error 429 -> too many requests)
     dic_developers = {}
     total_genres = []
     dic_genres = {}
     dic_plataforms = {}
+
     # cargamos los datos desde instant-gaming
-    populate_instant_gaming(NUM_PAGES_INSTANT_GAMING, dic_developers, total_genres, dic_genres, dic_plataforms)
+    populate_instant_gaming(dir_index, NUM_PAGES_INSTANT_GAMING, dic_developers, total_genres, dic_genres, dic_plataforms)
     # cargamos los datos desde eneba
-    populate_eneba(NUM_PAGES_ENEBA, dic_developers, total_genres, dic_genres, dic_plataforms)
-    print("FINISH POPULATE DATABASE")
+    populate_eneba(dir_index, NUM_PAGES_ENEBA, dic_developers, total_genres, dic_genres, dic_plataforms)
+    print("FINISH POPULATE DATABASE AND WHOOSH INDEX")
 
 
 # función auxiliar para tener los juegos en una lista y los generos de cada juego en un diccionario
@@ -63,10 +85,13 @@ def create_video_games(video_games_list, dic_genres, total_genres, store):
 
 
 # --- FUNCIONES INSTANT-GAMING ---------------------------------------------------------------------------------------------
-def populate_instant_gaming(num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
+def populate_instant_gaming(dir_index, num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
     video_games_list = []
     store = Store.objects.create(name="Instant Gaming")
     print("START INSTANT GAMING WEB SCRAPPING")
+
+    ix = open_dir(dir_index)
+    writer = ix.writer()
 
     for page in range(1, num_pages+1):
         request = urllib.request.Request(f"https://www.instant-gaming.com/es/busquedas/?page={page}", headers={'User-Agent': 'Mozilla/5.0'})
@@ -102,10 +127,14 @@ def populate_instant_gaming(num_pages, dic_developers, total_genres, dic_genres,
             video_games_genres, total_genres = get_genres_instant_gaming(s2, total_genres)
             plataform, dic_plataforms = get_plataform_instant_gaming(s2, dic_plataforms)
 
+            writer.add_document(name=name, url_inf=url_inf, price=price, discount=discount, score=score, description=description, release_date=release_date,
+                                developer=developer.name, genres=",".join(video_games_genres), plataform=plataform.name, store=store.name)
+
             video_games_list, dic_genres = create_video_game(name, url_inf, url_img, price, discount, score, description, release_date, developer, 
                                                             video_games_genres, dic_genres, plataform, store, video_games_list)
     
     create_video_games(video_games_list, dic_genres, total_genres, store)
+    writer.commit()
     print("FINISH INSTANT GAMING WEB SCRAPPING")
 
 
@@ -168,11 +197,14 @@ def get_plataform_instant_gaming(s2, dic_plataforms):
 
 
 # --- FUNCIONES ENEBA ------------------------------------------------------------------------------------------------------
-def populate_eneba(num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
+def populate_eneba(dir_index, num_pages, dic_developers, total_genres, dic_genres, dic_plataforms):
     video_games_list = []
     eneba_total_genres = []
     store = Store.objects.create(name="Eneba")
     print("START ENEBA WEB SCRAPPING")
+
+    ix = open_dir(dir_index)
+    writer = ix.writer()
 
     for page in range(1, num_pages+1):
         request = urllib.request.Request(f"https://www.eneba.com/es/store/games?page={page}&platforms[]=BETHESDA&platforms[]=BLIZZARD&platforms[]=EPIC_GAMES&platforms[]=GOG&platforms[]=ORIGIN&platforms[]=OTHER&platforms[]=STEAM&platforms[]=UPLAY&regions[]=global&sortBy=POPULARITY_DESC&types[]=game", 
@@ -212,11 +244,15 @@ def populate_eneba(num_pages, dic_developers, total_genres, dic_genres, dic_plat
             developer, dic_developers = get_developer_eneba(s2, dic_developers)
             video_games_genres, eneba_total_genres = get_genres_eneba(s2, eneba_total_genres)
             plataform, dic_plataforms = get_plataform_eneba(s2, dic_plataforms)
+
+            writer.add_document(name=name, url_inf=url_inf, price=price, discount=discount, score=score, description=description, release_date=release_date,
+                                developer=developer.name, genres=",".join(video_games_genres), plataform=plataform.name, store=store.name)
             
             video_games_list, dic_genres = create_video_game(name, url_inf, url_img, price, discount, score, description, release_date, developer, 
                                                             video_games_genres, dic_genres, plataform, store, video_games_list)
     
     create_video_games(video_games_list, dic_genres, [genre for genre in eneba_total_genres if genre not in total_genres], store)
+    writer.commit()
     print("FINISH ENEBA WEB SCRAPPING")
 
 
