@@ -144,7 +144,7 @@ def show_video_games_selected_store(request):
         formulario = StoreSelectionForm(request.POST)
         if formulario.is_valid():
             store = formulario.cleaned_data['store']
-            video_games = Video_game.objects.filter(store=store)
+            video_games = Video_game.objects.filter(store=store).select_related('developer', 'store')
             
     return render(request, 'video_games_selected_store.html', {'formulario':formulario, 'video_games':video_games, 'store':store})
 

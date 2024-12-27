@@ -21,9 +21,9 @@
         <p>Video games are grouped by developers</p>
     {% endif %}
 
-    {% regroup video_games by developer as grouped_video_games %}
+    {% regroup video_games|dictsort:"developer.id" by developer.id as grouped_video_games %}
     {% for group in grouped_video_games %}
-        <h4>Developer: <strong>{{group.grouper.name}}</strong>  |  Number of video games: {{group.list|length}}</h4>
+        <h4>Developer: <strong>{{ group.list.0.developer.name }}</strong> | Number of video games: {{ group.list|length }}</h4>
         <div class="video-games-container">
             {% for game in group.list %}
                 <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
