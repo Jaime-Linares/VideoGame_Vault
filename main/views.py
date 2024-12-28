@@ -159,7 +159,6 @@ def show_video_games_in_period(request):
     formulario = DateRangeForm()
     grouped = None
     video_games = None
-    video_games_length = 0
     video_games_by_genre = {}
     start_date = None
     end_date = None
@@ -171,7 +170,6 @@ def show_video_games_in_period(request):
             end_date = formulario.cleaned_data['end_date']
             grouped = formulario.cleaned_data['grouped']
             video_games = video_games_in_period(DIR_WHOOSH_INDEX, start_date, end_date)
-            video_games_length = len(video_games)
 
             if grouped:
                 for video_game in video_games:
