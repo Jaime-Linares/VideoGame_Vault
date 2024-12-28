@@ -20,13 +20,10 @@ locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 genre_traductor = {"aventuras":"aventura","cooperativo online":"cooperativo en línea","indie":"indies","un solo jugador":"un jugador", 
                    "fps":"fps / tps", "pr√©stamo familiar":"préstamo familiar", "cooperativo en l√≠nea":"cooperativo en línea"}
 
-# dirección para almacenar el índice
-dir_index = "Index"
-
 
 
 # --- FUNCIÓN PRINCIPAL PARA CARGAR LOS DATOS ------------------------------------------------------------------------------
-def populate():
+def populate(dir_index):
     # borramos todos los registros de la base de datos
     Developer.objects.all().delete()
     Genre.objects.all().delete()

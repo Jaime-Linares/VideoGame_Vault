@@ -8,6 +8,10 @@ from main.populateDB import populate
 from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm
 
 
+# dirección para almacenar el índice de whoosh
+dir_whoosh_index = "Index"
+
+
 
 # vista para mostrar la página de inicio
 def home(request):
@@ -71,7 +75,7 @@ def sign_up(request):
 # vista para cargar los datos
 @login_required(login_url='/login/')
 def load_data(request):
-    populate()
+    populate(dir_whoosh_index)
     return HttpResponseRedirect('/')
 
 
