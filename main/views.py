@@ -5,11 +5,12 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm
+from main.whoosh import video_games_in_period
 
 
 # dirección para almacenar el índice de whoosh
-dir_whoosh_index = "Index"
+DIR_WHOOSH_INDEX = "Index"
 
 
 
@@ -75,7 +76,7 @@ def sign_up(request):
 # vista para cargar los datos
 @login_required(login_url='/login/')
 def load_data(request):
-    populate(dir_whoosh_index)
+    populate(DIR_WHOOSH_INDEX)
     return HttpResponseRedirect('/')
 
 
@@ -151,4 +152,22 @@ def show_video_games_selected_store(request):
             video_games = Video_game.objects.filter(store=store).select_related('developer', 'store')
             
     return render(request, 'video_games_selected_store.html', {'formulario':formulario, 'video_games':video_games, 'store':store})
+
+
+# vista para mostrar los videojuegos cuya fecha de lanzamiento se encuentre en el rango especificado utilizando whoosh
+def show_video_games_in_period(request):
+    formulario = DateRangeForm()
+    video_games = None
+    start_date = None
+    end_date = None
+
+    if request.method == 'POST':
+        formulario = DateRangeForm(request.POST)
+        if formulario.is_valid():
+            start_date = formulario.cleaned_data['start_date']
+            end_date = formulario.cleaned_data['end_date']
+            video_games = video_games_in_period(DIR_WHOOSH_INDEX, start_date, end_date)
+
+    return render(request, 'video_games_in_period.html', {'formulario': formulario, 'video_games': video_games, 
+                                                          'start_date': start_date, 'end_date': end_date})  
 

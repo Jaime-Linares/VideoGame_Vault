@@ -34,6 +34,7 @@ urlpatterns = [
     path('video_games_selected_genre/', views.show_video_games_selected_genre),
     path('video_games_selected_plataform/', views.show_video_games_selected_plataform),
     path('video_games_selected_store/', views.show_video_games_selected_store),
+    path('video_games_in_period/', views.show_video_games_in_period),
 ]
 
 if settings.DEBUG:
