@@ -157,7 +157,10 @@ def show_video_games_selected_store(request):
 # vista para mostrar los videojuegos cuya fecha de lanzamiento se encuentre en el rango especificado utilizando whoosh
 def show_video_games_in_period(request):
     formulario = DateRangeForm()
+    grouped = None
     video_games = None
+    video_games_length = 0
+    video_games_by_genre = {}
     start_date = None
     end_date = None
 
@@ -166,8 +169,19 @@ def show_video_games_in_period(request):
         if formulario.is_valid():
             start_date = formulario.cleaned_data['start_date']
             end_date = formulario.cleaned_data['end_date']
+            grouped = formulario.cleaned_data['grouped']
             video_games = video_games_in_period(DIR_WHOOSH_INDEX, start_date, end_date)
+            video_games_length = len(video_games)
 
-    return render(request, 'video_games_in_period.html', {'formulario': formulario, 'video_games': video_games, 
-                                                          'start_date': start_date, 'end_date': end_date})  
+            if grouped:
+                for video_game in video_games:
+                    genres = video_game.genres.all()
+                    for genre in genres:
+                        if genre in video_games_by_genre:
+                            video_games_by_genre[genre].append(video_game)
+                        else:
+                            video_games_by_genre[genre] = [video_game]
+
+    return render(request, 'video_games_in_period.html', {'formulario': formulario, 'video_games_by_genre': video_games_by_genre, 'video_games': video_games,
+                                                          'start_date': start_date, 'end_date': end_date, 'grouped': grouped})  
 

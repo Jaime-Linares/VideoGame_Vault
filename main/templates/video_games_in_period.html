@@ -18,26 +18,62 @@
 
     {% if start_date and end_date %}
         <h3> Total number of video games whose release date is between <strong>{{start_date|date:"F j, Y"}}</strong> and <strong>{{end_date|date:"F j, Y"}}</strong>: {{video_games|length}}</h3>
+        {% if grouped %}
+            <p>Video games are grouped by genre</p>
+        {% endif %}
     {% endif %}
 
-    <div class="video-games-container">
-        {% for game in video_games %}
-            <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
-                <div class="video-game-card">
-                    <div class="video-game-image">
-                        <img src="{{ game.url_img }}" alt="{{ game.name }}">
-                    </div>
-
-                    <div class="video-game-info">
-                        <h3>{{ game.name }}</h3>
-                        <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
-                        <p><strong>Store:</strong> {{ game.store.name }}</p>
-                    </div>
-                </div>
-            </a>
+    {% if grouped %}
+        {% for genre, video_games_list in video_games_by_genre.items %}
+            <h4>Genre: <strong>{{ genre }}</strong> | Number of video games: {{ video_games_list|length }}</h4>
+            <div class="video-games-container">
+                {% for game in video_games_list %}
+                    <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
+                        <div class="video-game-card">
+                            <div class="video-game-image">
+                                <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                            </div>
+                            <div class="video-game-info">
+                                <h3>{{ game.name }}</h3>
+                                <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                                <p><strong>Store:</strong> {{ game.store.name }}</p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <hr>
         {% empty %}
-            <h3>😜 Don't be shy! Choose a period of time 😜</h3>
+            {% if start_date and end_date %}
+                <h3>😢 There are no video games in this period of time 😢</h3>
+            {% else %}
+                <h3>😜 Don't be shy! Choose a period of time 😜</h3>
+            {% endif %}
         {% endfor %}
-    </div>
+    {% else %}
+        <div class="video-games-container">
+            {% for game in video_games %}
+                <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
+                    <div class="video-game-card">
+                        <div class="video-game-image">
+                            <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                        </div>
+
+                        <div class="video-game-info">
+                            <h3>{{ game.name }}</h3>
+                            <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                            <p><strong>Store:</strong> {{ game.store.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                {% if start_date and end_date %}
+                    <h3>😢 There are no video games in this period of time 😢</h3>
+                {% else %}
+                    <h3>😜 Don't be shy! Choose a period of time 😜</h3>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 
