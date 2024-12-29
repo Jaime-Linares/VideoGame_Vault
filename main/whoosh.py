@@ -71,3 +71,19 @@ def video_games_by_genre_and_words(dir_index, genre, words):
 
     return video_games
 
+
+# función para buscar los videojuegos más relevantes que contengan la frase especificada en la descripción
+def video_games_by_description(dir_index, sentence):
+    video_games = []
+
+    ix = open_dir(dir_index)
+    with ix.searcher() as searcher:
+        query = QueryParser("description", ix.schema).parse('"'+ sentence + '"')
+        results = searcher.search(query, limit=10)
+
+        for r in results:
+            video_game = Video_game.objects.all().get(url_inf=r['url_inf'])
+            video_games.append(video_game)
+
+    return video_games
+

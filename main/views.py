@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
 from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm, SearchNameOrDescriptionForm, GenreAndSearchNameForm
-from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words, video_games_by_genre_and_words
+from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words, video_games_by_genre_and_words, video_games_by_description
 
 
 # dirección para almacenar el índice de whoosh
@@ -230,4 +230,19 @@ def show_relevant_video_games_selected_genre_and_words_in_title(request):
 
     return render(request, 'video_games_selected_genre_and_words_in_title.html', {'formulario': formulario, 'video_games': video_games, 'genre': genre, 
                                                                                   'words': words})
+
+
+# vista para mostrar los videojuegos más relevantes que contienen la frase especificada en la descripción utilizando whoosh
+def show_relevant_video_games_with_sentence_in_description(request):
+    formulario = SearchNameOrDescriptionForm()
+    video_games = None
+    sentence = None
+
+    if request.method == 'POST':
+        formulario = SearchNameOrDescriptionForm(request.POST)
+        if formulario.is_valid():
+            sentence = formulario.cleaned_data['words']
+            video_games = video_games_by_description(DIR_WHOOSH_INDEX, sentence)
+
+    return render(request, 'video_games_with_sentence_in_description.html', {'formulario': formulario, 'video_games': video_games, 'sentence': sentence})
 
