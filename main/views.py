@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm
-from main.whoosh import video_games_in_period
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm
+from main.whoosh import video_games_in_period, video_games_selected_max_price
 
 
 # dirección para almacenar el índice de whoosh
@@ -182,4 +182,19 @@ def show_video_games_in_period(request):
 
     return render(request, 'video_games_in_period.html', {'formulario': formulario, 'video_games_by_genre': video_games_by_genre, 'video_games': video_games,
                                                           'start_date': start_date, 'end_date': end_date, 'grouped': grouped})  
+
+
+# vista para mostrar los videojuegos que tienen un precio menor o igual al especificado
+def show_video_games_selected_max_price(request):
+    formulario = MaxPriceForm()
+    video_games = None
+    max_price = None
+
+    if request.method == 'POST':
+        formulario = MaxPriceForm(request.POST)
+        if formulario.is_valid():
+            max_price = formulario.cleaned_data['max_price']
+            video_games = video_games_selected_max_price(DIR_WHOOSH_INDEX, max_price)
+
+    return render(request, 'video_games_max_price.html', {'formulario': formulario, 'video_games': video_games, 'max_price': max_price})  
 

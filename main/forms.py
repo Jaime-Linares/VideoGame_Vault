@@ -71,3 +71,12 @@ class DateRangeForm(forms.Form):
                 raise forms.ValidationError("Start date must be before end date.")
         return cleaned_data
 
+
+# formulario para introducir un precio máximo
+class MaxPriceForm(forms.Form):
+    max_price = forms.FloatField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': 0.01}),
+        label="Max price",
+        required=True
+    ) 
+

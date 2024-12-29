@@ -22,3 +22,19 @@ def video_games_in_period(dir_index, start_date, end_date):
 
     return video_games
 
+
+# función para buscar los videojuegos que sean de un precio menor o igual al especificado
+def video_games_selected_max_price(dir_index, max_price):
+    video_games = []
+
+    ix = open_dir(dir_index)
+    with ix.searcher() as searcher:
+        query = QueryParser("price", ix.schema).parse('[0 TO ' + str(max_price) + ']')
+        results = searcher.search(query, limit=None)
+
+        for r in results:
+            video_game = Video_game.objects.all().get(url_inf=r['url_inf'])
+            video_games.append(video_game)
+
+    return video_games
+

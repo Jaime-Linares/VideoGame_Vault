@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %}
+    <h2>🔍✨ Search video games for maximum price ✨🔍</h2>
+{% endblock %}
+
+{% block contenido %}
+    <form id="formulario" method="POST" action=""> {% csrf_token %}
+        <div class="form-container">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn-submit">Search</button>
+        </div>
+    </form>
+
+    <hr>
+    <hr>
+
+    {% if max_price %}
+        <h3> Total number of video games found with a price less than <strong>{{max_price}}</strong>: {{video_games|length}}</h3>
+        <p>Video games are grouped by store</p>
+    {% endif %}
+
+    {% regroup video_games|dictsort:"store.id" by store.id as grouped_video_games %}
+    {% for group in grouped_video_games %}
+        <h4>Store: <strong>{{ group.list.0.store.name }}</strong> | Number of video games: {{ group.list|length }}</h4>
+        <div class="video-games-container">
+            {% for game in group.list %}
+                <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
+                    <div class="video-game-card">
+                        <div class="video-game-image">
+                            <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                        </div>
+                        <div class="video-game-info">
+                            <h3>{{ game.name }}</h3>
+                            <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                            <p><strong>Store:</strong> {{ game.store.name }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        <hr>
+    {% empty %}
+        {% if max_price %}
+            <h3>😢 There are no video games with such a low price 😢</h3>
+        {% else %}
+            <h3>😜 Don't be shy! Choose a maximun price 😜</h3>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
