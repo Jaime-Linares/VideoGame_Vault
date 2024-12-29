@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+
+{% block titulo %}
+    <h2>🔍✨ Search most relevant video games by genre and with words in title ✨🔍</h2>
+{% endblock %}
+
+{% block contenido %}
+    <form id="formulario" method="POST" action=""> {% csrf_token %}
+        <div class="form-container">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn-submit">Search</button>
+        </div>
+    </form>
+
+    <hr>
+    <hr>
+
+    {% if words and genre %}
+        <h3>The most relevant video games with genre <strong>{{genre.name}}</strong> and that contain the word(s) <strong>{{words}}</strong> in the title</h3>
+    {% endif %}
+
+    <div class="video-games-container">
+        {% for game in video_games %}
+            <a href="{% url 'video_game_detail' game.id %}" class="video-game-link">
+                <div class="video-game-card">
+                    <div class="video-game-image">
+                        <img src="{{ game.url_img }}" alt="{{ game.name }}">
+                    </div>
+
+                    <div class="video-game-info">
+                        <h3>{{ game.name }}</h3>
+                        <p><strong>Price:</strong> {{ game.price }} € {% if game.discount > 0 %}<strong>| Discount:</strong> {{ game.discount }}%{% endif %}</p>
+                        <p><strong>Store:</strong> {{ game.store.name }}</p>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            {% if words and genre %}
+                <h3>😢 There are no video games with that genre and that contain that word(s) in title 😢</h3>
+            {% else %}
+                <h3>😜 Don't be shy! Choose a genre and write some words 😜</h3>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+

@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm, SearchNameOrDescriptionForm
-from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm, SearchNameOrDescriptionForm, GenreAndSearchNameForm
+from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words, video_games_by_genre_and_words
 
 
 # dirección para almacenar el índice de whoosh
@@ -212,4 +212,22 @@ def show_relevant_video_games_with_words_in_title_or_description(request):
             video_games = video_games_with_words(DIR_WHOOSH_INDEX, words)
 
     return render(request, 'video_games_with_words_in_title_or_description.html', {'formulario': formulario, 'video_games': video_games, 'words': words})
+
+
+# vista para mostrar los videojuegos más relevantes que son de un género específico y que contienen la/s palabra/s especificada/s en el título utilizando whoosh
+def show_relevant_video_games_selected_genre_and_words_in_title(request):
+    formulario = GenreAndSearchNameForm()
+    video_games = None
+    genre = None
+    words = None
+
+    if request.method == 'POST':
+        formulario = GenreAndSearchNameForm(request.POST)
+        if formulario.is_valid():
+            genre = formulario.cleaned_data['genre']
+            words = formulario.cleaned_data['words']
+            video_games = video_games_by_genre_and_words(DIR_WHOOSH_INDEX, genre, words)
+
+    return render(request, 'video_games_selected_genre_and_words_in_title.html', {'formulario': formulario, 'video_games': video_games, 'genre': genre, 
+                                                                                  'words': words})
 

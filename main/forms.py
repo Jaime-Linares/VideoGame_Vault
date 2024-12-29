@@ -89,3 +89,18 @@ class SearchNameOrDescriptionForm(forms.Form):
         required=True
     )
 
+
+# formulario para elegir un género e introducir una/s palabra/s del título de un videojuego
+class GenreAndSearchNameForm(forms.Form):
+    genre = forms.ModelChoiceField(
+        queryset=Genre.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Choose a genre",
+        required=True
+    )
+    words = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Enter a word or words",
+        required=True
+    )
+

@@ -35,6 +35,7 @@ urlpatterns = [
     path('video_games_selected_plataform/', views.show_video_games_selected_plataform),
     path('video_games_selected_store/', views.show_video_games_selected_store),
     path('relevant_video_games_with_words/', views.show_relevant_video_games_with_words_in_title_or_description),
+    path('relevant_video_games_by_genre_and_words/', views.show_relevant_video_games_selected_genre_and_words_in_title),
     path('video_games_in_period/', views.show_video_games_in_period),
     path('video_games_selected_max_price/', views.show_video_games_selected_max_price),
 ]

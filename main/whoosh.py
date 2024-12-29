@@ -54,3 +54,20 @@ def video_games_with_words(dir_index, words):
 
     return video_games
 
+
+# función para buscar los videojuegos más relevantes que pertenezcan a un género y que contengan la/s palabra/s especificada/s en el título
+def video_games_by_genre_and_words(dir_index, genre, words):
+    video_games = []
+    genre = '"' + genre.name + '"'  # se ponen comillas porque hay géneros que tienen más de una palabra
+
+    ix = open_dir(dir_index)
+    with ix.searcher() as searcher:
+        query = MultifieldParser(["genres", "name"], ix.schema).parse(genre + " AND " + str(words))
+        results = searcher.search(query, limit=10)
+
+        for r in results:
+            video_game = Video_game.objects.all().get(url_inf=r['url_inf'])
+            video_games.append(video_game)
+
+    return video_games
+
