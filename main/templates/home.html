@@ -7,11 +7,11 @@
 
 {% block contenido %}
     {% if request.user.is_authenticated %}
-        <p>Welcome to the video game vault <strong>✨ {{ request.user.username }} ✨</strong>!</p>
+        <h3 style="color: rgb(27, 0, 164);">Welcome to the video game vault <strong>✨ {{ request.user.username }} ✨</strong>!</h3>
     {% else %}
-        <p>Welcome to the video game vault!</p>
+        <h3 style="color: rgb(27, 0, 164);">Welcome to the video game vault!</h3>
     {% endif %}
-    <p>The information that you have in the DB right now:</p>
+    <h4>The information that you have in the DB right now:</h4>
     <ul class="info-list">
         <li>Number of video games: {{video_games}}</li>
         <li>Number of developers: {{developers}}</li>
