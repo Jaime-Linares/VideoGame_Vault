@@ -80,3 +80,12 @@ class MaxPriceForm(forms.Form):
         required=True
     ) 
 
+
+# formulario para introducir una/s palabra/s del título o descripción de un videojuego
+class SearchNameOrDescriptionForm(forms.Form):
+    words = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Enter a word or words",
+        required=True
+    )
+

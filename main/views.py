@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
-from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm
-from main.whoosh import video_games_in_period, video_games_selected_max_price
+from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm, SearchNameOrDescriptionForm
+from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words
 
 
 # dirección para almacenar el índice de whoosh
@@ -184,7 +184,7 @@ def show_video_games_in_period(request):
                                                           'start_date': start_date, 'end_date': end_date, 'grouped': grouped})  
 
 
-# vista para mostrar los videojuegos que tienen un precio menor o igual al especificado
+# vista para mostrar los videojuegos que tienen un precio menor o igual al especificado utilizando whoosh
 def show_video_games_selected_max_price(request):
     formulario = MaxPriceForm()
     video_games = None
@@ -197,4 +197,19 @@ def show_video_games_selected_max_price(request):
             video_games = video_games_selected_max_price(DIR_WHOOSH_INDEX, max_price)
 
     return render(request, 'video_games_max_price.html', {'formulario': formulario, 'video_games': video_games, 'max_price': max_price})  
+
+
+# vista para mostrar los videojuegos más relevantes que contienen la/s palabra/s especificada/s en el título o descripción utilizando whoosh
+def show_relevant_video_games_with_words_in_title_or_description(request):
+    formulario = SearchNameOrDescriptionForm()
+    video_games = None
+    words = None
+
+    if request.method == 'POST':
+        formulario = SearchNameOrDescriptionForm(request.POST)
+        if formulario.is_valid():
+            words = formulario.cleaned_data['words']
+            video_games = video_games_with_words(DIR_WHOOSH_INDEX, words)
+
+    return render(request, 'video_games_with_words_in_title_or_description.html', {'formulario': formulario, 'video_games': video_games, 'words': words})
 
