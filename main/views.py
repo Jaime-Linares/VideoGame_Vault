@@ -155,6 +155,7 @@ def show_video_games_selected_store(request):
 
 
 # vista para mostrar los videojuegos cuya fecha de lanzamiento se encuentre en el rango especificado utilizando whoosh
+@login_required(login_url='/login/')
 def show_video_games_in_period(request):
     formulario = DateRangeForm()
     grouped = None
@@ -185,6 +186,7 @@ def show_video_games_in_period(request):
 
 
 # vista para mostrar los videojuegos que tienen un precio menor o igual al especificado utilizando whoosh
+@login_required(login_url='/login/')
 def show_video_games_selected_max_price(request):
     formulario = MaxPriceForm()
     video_games = None
@@ -200,6 +202,7 @@ def show_video_games_selected_max_price(request):
 
 
 # vista para mostrar los videojuegos más relevantes que contienen la/s palabra/s especificada/s en el título o descripción utilizando whoosh
+@login_required(login_url='/login/')
 def show_relevant_video_games_with_words_in_title_or_description(request):
     formulario = SearchNameOrDescriptionForm()
     video_games = None
@@ -215,6 +218,7 @@ def show_relevant_video_games_with_words_in_title_or_description(request):
 
 
 # vista para mostrar los videojuegos más relevantes que son de un género específico y que contienen la/s palabra/s especificada/s en el título utilizando whoosh
+@login_required(login_url='/login/')
 def show_relevant_video_games_selected_genre_and_words_in_title(request):
     formulario = GenreAndSearchNameForm()
     video_games = None
@@ -233,6 +237,7 @@ def show_relevant_video_games_selected_genre_and_words_in_title(request):
 
 
 # vista para mostrar los videojuegos más relevantes que contienen la frase especificada en la descripción utilizando whoosh
+@login_required(login_url='/login/')
 def show_relevant_video_games_with_sentence_in_description(request):
     formulario = SearchNameOrDescriptionForm()
     video_games = None
