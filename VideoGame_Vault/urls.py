@@ -28,6 +28,7 @@ urlpatterns = [
     path('logout/', views.sign_out),
     path('register/', views.sign_up),
     path('populateDB/', views.load_data),
+    path('populateRS/', views.load_recommendations_system),
     path('all_video_games/', views.show_all_video_games),
     path('video_game/<int:video_game_id>/', views.show_video_game, name='video_game_detail'),
     path('video_games_selected_developer/', views.show_video_games_selected_developer),

@@ -7,10 +7,13 @@ from django.contrib.auth.decorators import login_required
 from main.populateDB import populate
 from main.forms import GenreSelectionForm, DeveloperSelectionForm, PlataformSelectionForm, StoreSelectionForm, DateRangeForm, MaxPriceForm, SearchNameOrDescriptionForm, GenreAndSearchNameForm
 from main.whoosh import video_games_in_period, video_games_selected_max_price, video_games_with_words, video_games_by_genre_and_words, video_games_by_description
+from main.recommendations import generate_and_save_recommendations, get_recommendations_for_game
 
 
 # dirección para almacenar el índice de whoosh
 DIR_WHOOSH_INDEX = "Index"
+# recomendaciones basadas en contenido
+recommendations = None
 
 
 
@@ -80,6 +83,13 @@ def load_data(request):
     return HttpResponseRedirect('/')
 
 
+# vista para generar y guardar las recomendaciones
+@login_required(login_url='/login/')
+def load_recommendations_system(request):
+    generate_and_save_recommendations()
+    return HttpResponseRedirect('/')
+
+
 # vista para mostrar todos los videojuegos
 def show_all_video_games(request):
     video_games = Video_game.objects.all()
@@ -89,8 +99,13 @@ def show_all_video_games(request):
 # vista para mostrar los detalles de un videojuego y sus videojuegos recomendados según su parecido
 # utilizando el SR basado en contenido
 def show_video_game(request, video_game_id):
+    global recommendations
+    video_games_recommended = None
     video_game = get_object_or_404(Video_game, pk=video_game_id)
-    video_games_recommended = Video_game.objects.all()[:4]  # cambiar por el SR basado en contenido
+    # obtener las recomendaciones para el videojuego
+    recommended_ids = get_recommendations_for_game(video_game_id, recommendations)
+    video_games_recommended = Video_game.objects.filter(id__in=recommended_ids)
+
     return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})
 
 
