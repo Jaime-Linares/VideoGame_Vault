@@ -6,119 +6,85 @@ from sklearn.preprocessing import MinMaxScaler
 from langdetect import detect
 
 
-# Pesos para los atributos
-DESCRIPTION_WEIGHT = 3.0
-GENRES_WEIGHT = 2.0
-NAME_WEIGHT = 1.5
-
-# Carga los modelos de spaCy para inglés y español
+# carga los modelos de spaCy para inglés y español
 nlp_en = spacy.load("en_core_web_md")
 nlp_es = spacy.load("es_core_news_md")
 
+# pesos para los atributos
+DESCRIPTION_WEIGHT = 1.5
+GENRES_WEIGHT = 1.75
+NAME_WEIGHT = 1.5
 
 
-def get_spacy_model(text):
-    """
-    Devuelve el modelo spaCy correspondiente al idioma detectado.
-    """
+
+# --- FUNCIONES PARA GENERAR Y GUARDAR LAS RECOMENDACIONES -------------------------------------------------------------------------
+# función que genera las recomendaciones y las guarda en su archivo correspondiente
+def generate_and_save_recommendations(dir_rs_data):
     try:
-        lang = detect(text)
-        if lang == "es":
-            return nlp_es
-        elif lang == "en":
-            return nlp_en
-    except Exception:
-        pass  # Si no se puede detectar el idioma, usar inglés por defecto
-    return nlp_en
+        # vemos si los archivos de recomendación están generados y si es así, los borramos
+        archivos = [dir_rs_data+".bak", dir_rs_data+".dat", dir_rs_data+".dir"]
+        for archivo in archivos:
+            if os.path.exists(archivo):
+                os.remove(archivo)
+        
+        print("STARTING TO SAVE THE RECOMMENDATION SYSTEM")
+        # generamos los vectores de los videojuegos
+        video_game_ids, vectors = generate_video_games_vectors()
+        # calculamos la matriz de similitud utilizando la similitud del coseno
+        print("Calculating the similarity matrix")
+        similarity_matrix = cosine_similarity(vectors)
+        # guardamos las recomendaciones
+        print("Saving the recommendations")
+        with shelve.open(dir_rs_data) as db:
+            for idx, video_game_id in enumerate(video_game_ids):
+                similar_indices = similarity_matrix[idx].argsort()[::-1]
+                recommended_ids = [video_game_ids[i] for i in similar_indices if i != idx][:4]
+                db[str(video_game_id)] = recommended_ids
+        print(f"RECOMMENDATION SYSTEM SAVED SUCCESSFULLY")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        traceback.print_exc()
 
 
-def encode_categorical_attributes(games):
-    """
-    Codifica los géneros, plataformas y desarrolladores manualmente como vectores binarios.
-    """
-    all_genres = list(Genre.objects.values_list("name", flat=True))
-    all_platforms = list(Plataform.objects.values_list("name", flat=True))
-    all_developers = list(Developer.objects.values_list("name", flat=True))
-
-    genre_vectors, platform_vectors, developer_vectors = [], [], []
-    for game in games:
-        # Codificar géneros como vector binario
-        game_genres = [genre.name for genre in game.genres.all()]
-        genre_vectors.append([1 if genre in game_genres else 0 for genre in all_genres])
-
-        # Codificar plataforma como vector binario (única plataforma por juego)
-        platform_vectors.append([1 if platform == game.plataform.name else 0 for platform in all_platforms])
-
-        # Codificar desarrollador como vector binario (único desarrollador por juego)
-        developer_vectors.append([1 if developer == game.developer.name else 0 for developer in all_developers])
-
-    return np.array(genre_vectors), np.array(platform_vectors), np.array(developer_vectors)
-
-
-def normalize_numerical_attributes(games):
-    """
-    Normaliza atributos numéricos como precio y puntuación.
-    """
-    prices = [game.price for game in games]
-    scores = [game.score for game in games]
-
-    scaler = MinMaxScaler()
-    return scaler.fit_transform(np.array([prices, scores]).T)
-
-
-def generate_game_vectors():
-    """
-    Genera vectores de características combinando todos los atributos de los videojuegos.
-    """
-    print("Iniciando generación de vectores...")
-    games = Video_game.objects.all()
-    game_ids = []
-    description_vectors = []
+# función que genera vectores de características combinando todos los atributos de los videojuegos
+def generate_video_games_vectors():
+    print("Generating vectors for video games")
+    video_games_ids = []
+    valid_video_games = []
     name_vectors = []
+    description_vectors = []
 
-    valid_games = []
+    video_games = Video_game.objects.all()
+    print(f"Total number of video games found: {len(video_games)}")
 
-    print(f"Total de juegos encontrados: {len(games)}")
-
-    for idx, game in enumerate(games):
-        if not game.description or not game.name:
-            print(f"Advertencia: El juego {game.id} (índice {idx}) no tiene descripción o nombre. Se omitirá.")
+    for idx, video_game in enumerate(video_games):
+        if not video_game.description:
+            print(f"Warning! The game with name {video_game.name} and id {video_game.id} has no description, it will be skipped")
             continue
-
         try:
-            # Detectar idioma y procesar descripción
-            nlp_model_desc = get_spacy_model(game.description)
-            description_vectors.append(nlp_model_desc(game.description).vector)
-
-            # Detectar idioma y procesar título
-            nlp_model_name = get_spacy_model(game.name)
-            name_vectors.append(nlp_model_name(game.name).vector)
-
-            valid_games.append(game)
-            game_ids.append(game.id)
-
+            # detectamos el idioma y procesamos el título
+            nlp_model_name = get_spacy_model(video_game.name, video_game.id)
+            name_vectors.append(nlp_model_name(video_game.name).vector)
+            # detectamos el idioma y procesamos la descripción
+            nlp_model_desc = get_spacy_model(video_game.description, video_game.id)
+            description_vectors.append(nlp_model_desc(video_game.description).vector)
+            # añadimos el videojuego a la lista de juegos válidos y guardamos su id
+            valid_video_games.append(video_game)
+            video_games_ids.append(video_game.id)
         except Exception as e:
-            print(f"Error al procesar el juego {game.id}: {e}")
+            print(f"Error processing video game {video_game.id}: {e}")
             traceback.print_exc()
 
-    print(f"Se procesaron {len(valid_games)} juegos válidos de un total de {len(games)} juegos.")
+    print(f"{len(valid_video_games)} valid video games were processed out of a total of {len(video_games)} video games")
 
+    # concatenamos los vectores de características de los videojuegos
     try:
-        description_vectors = np.array(description_vectors)
         name_vectors = np.array(name_vectors)
-
-        genre_vectors, platform_vectors, developer_vectors = encode_categorical_attributes(valid_games)
-        numerical_attributes = normalize_numerical_attributes(valid_games)
-
-        print("Verificando tamaños de arrays:")
-        print(f"Descripción: {description_vectors.shape}")
-        print(f"Nombre: {name_vectors.shape}")
-        print(f"Géneros: {genre_vectors.shape}")
-        print(f"Plataformas: {platform_vectors.shape}")
-        print(f"Desarrolladores: {developer_vectors.shape}")
-        print(f"Atributos numéricos: {numerical_attributes.shape}")
-
-        print("Concatenando vectores...")
+        description_vectors = np.array(description_vectors)
+        genre_vectors, platform_vectors, developer_vectors = encode_categorical_attributes(valid_video_games)
+        numerical_attributes = normalize_numerical_attributes(valid_video_games)
+        print("Concatenating the vectors")
+        # multiplicamos por el peso correspondiente a cada atributo, si no se especifica se asume 1
         combined_vectors = np.hstack(
             [
                 description_vectors * DESCRIPTION_WEIGHT,
@@ -129,67 +95,74 @@ def generate_game_vectors():
                 numerical_attributes,
             ]
         )
-
     except Exception as e:
-        print(f"Error al concatenar vectores: {e}")
+        print(f"Error concatenating vectors: {e}")
         traceback.print_exc()
         raise
 
-    return game_ids, combined_vectors
+    return video_games_ids, combined_vectors
 
 
-def generate_and_save_recommendations(dir_rs_data):
-    """
-    Genera las recomendaciones y las guarda en el archivo shelve.
-    """
+# función que sirve para detectar el idioma de un texto y devolver el modelo de spaCy correspondiente
+def get_spacy_model(text, video_game_id):
     try:
-        # archivos que se generan
-        archivos = [dir_rs_data+".bak", dir_rs_data+".dat", dir_rs_data+".dir"]
-        # Eliminar archivos previos
-        for archivo in archivos:
-            if os.path.exists(archivo):
-                os.remove(archivo)
-        
-        print("Generando vectores de videojuegos...")
-
-        # Generar vectores
-        game_ids, vectors = generate_game_vectors()
-
-        print("Calculando matriz de similitud...")
-        similarity_matrix = cosine_similarity(vectors)
-
-        print("Guardando recomendaciones en shelve...")
-        with shelve.open(dir_rs_data) as db:
-            for idx, game_id in enumerate(game_ids):
-                similar_indices = similarity_matrix[idx].argsort()[::-1]
-                recommended_ids = [game_ids[i] for i in similar_indices if i != idx][:4]
-                db[str(game_id)] = recommended_ids
-
-        print(f"Recomendaciones guardadas en {dir_rs_data}")
-
-    except Exception as e:
-        print(f"Error inesperado: {e}")
-        traceback.print_exc()
+        language = detect(text)
+        if language == "es":
+            return nlp_es
+        elif language == "en":
+            return nlp_en
+    except Exception:
+        print(f"Error detecting language for game with id {video_game_id}. We will use English by default.")
+        pass  # si no se puede detectar el idioma, usar inglés por defecto
+    return nlp_en
 
 
+# función que codifica los atributos categóricos de los videojuegos (géneros, plataforma y desarrollador)
+# transformándolos en vectores binarios
+def encode_categorical_attributes(video_games):
+    genre_vectors, platform_vectors, developer_vectors = [], [], []
+
+    all_genres = list(Genre.objects.values_list("name", flat=True))
+    all_platforms = list(Plataform.objects.values_list("name", flat=True))
+    all_developers = list(Developer.objects.values_list("name", flat=True))
+    for video_game in video_games:
+        # codificamos los géneros como vector binario
+        game_genres = [genre.name for genre in video_game.genres.all()]
+        genre_vectors.append([1 if genre in game_genres else 0 for genre in all_genres])
+        # codificamos la plataforma como vector binario
+        platform_vectors.append([1 if platform == video_game.plataform.name else 0 for platform in all_platforms])
+        # codificamos desarrollador como vector binario
+        developer_vectors.append([1 if developer == video_game.developer.name else 0 for developer in all_developers])
+
+    return np.array(genre_vectors), np.array(platform_vectors), np.array(developer_vectors)
+
+
+# función que normaliza los atributos numéricos de los videojuegos (precio y puntuación)
+# dejándolos en un rango de 0 a 1 mediante MinMaxScaler
+def normalize_numerical_attributes(video_games):
+    prices = [video_game.price for video_game in video_games]
+    scores = [video_game.score for video_game in video_games]
+
+    scaler = MinMaxScaler()
+    return scaler.fit_transform(np.array([prices, scores]).T)
+
+
+
+# --- FUNCIONES PARA OBTENER Y CARGAR LAS RECOMENDACIONES -------------------------------------------------------------------------
+# función que obtiene las recomendaciones para un videojuego específico
+def get_recommendations_for_game(game_id, dir_rs_data, recommendations):
+    if recommendations is None:
+        recommendations = load_recommendations(dir_rs_data)
+    return recommendations.get(game_id)
+
+
+# función que carga las recomendaciones desde el archivo donde se encuentran
 def load_recommendations(dir_rs_data):
-    """
-    Carga las recomendaciones desde el archivo shelve.
-    """
     try:
         with shelve.open(dir_rs_data) as db:
             return {int(key): value for key, value in db.items()}
     except Exception as e:
-        print(f"Error al cargar las recomendaciones: {e}")
+        print(f"Error loading recommendations: {e}")
         traceback.print_exc()
         return {}
-
-
-def get_recommendations_for_game(game_id, dir_rs_data, recommendations):
-    """
-    Obtiene las recomendaciones para un videojuego específico.
-    """
-    if recommendations is None:
-        recommendations = load_recommendations(dir_rs_data)
-    return recommendations.get(game_id, [])
 
