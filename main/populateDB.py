@@ -45,7 +45,7 @@ def populate(dir_index):
 
     # variables importantes
     NUM_PAGES_INSTANT_GAMING = 10
-    NUM_PAGES_ENEBA = 2    # se recomienda no poner más de 1 o 2 porque eneba bloquea las peticiones (error 429 -> too many requests)
+    NUM_PAGES_ENEBA = 1    # se recomienda no poner más de 1 o 2 porque eneba bloquea las peticiones (error 429 -> too many requests)
     dic_developers = {}
     total_genres = []
     dic_genres = {}
