@@ -12,6 +12,8 @@ from main.recommendations import generate_and_save_recommendations, get_recommen
 
 # dirección para almacenar el índice de whoosh
 DIR_WHOOSH_INDEX = "Index"
+# dirección para almacenar las recomendaciones
+DIR_RS_DATA = "dataRS.dat"
 # recomendaciones basadas en contenido
 recommendations = None
 
@@ -86,7 +88,7 @@ def load_data(request):
 # vista para generar y guardar las recomendaciones
 @login_required(login_url='/login/')
 def load_recommendations_system(request):
-    generate_and_save_recommendations()
+    generate_and_save_recommendations(DIR_RS_DATA)
     return HttpResponseRedirect('/')
 
 
@@ -103,7 +105,7 @@ def show_video_game(request, video_game_id):
     video_games_recommended = None
     video_game = get_object_or_404(Video_game, pk=video_game_id)
     # obtener las recomendaciones para el videojuego
-    recommended_ids = get_recommendations_for_game(video_game_id, recommendations)
+    recommended_ids = get_recommendations_for_game(video_game_id, DIR_RS_DATA, recommendations)
     video_games_recommended = Video_game.objects.filter(id__in=recommended_ids)
 
     return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})

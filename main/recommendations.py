@@ -1,12 +1,9 @@
-import shelve
+import os, traceback, shelve, spacy
+from main.models import Video_game, Genre, Plataform, Developer
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
 from langdetect import detect
-from main.models import Video_game, Genre, Plataform, Developer
-import spacy
-import os
-import traceback
 
 
 # Pesos para los atributos
@@ -14,15 +11,10 @@ DESCRIPTION_WEIGHT = 3.0
 GENRES_WEIGHT = 2.0
 NAME_WEIGHT = 1.5
 
-# Ruta del archivo donde se guardan las recomendaciones
-DATA_RS_FILE = "dataRS.dat"
-
-# archivos que se generan
-archivos = [DATA_RS_FILE+".bak", DATA_RS_FILE+".dat", DATA_RS_FILE+".dir"]
-
 # Carga los modelos de spaCy para inglés y español
 nlp_en = spacy.load("en_core_web_md")
 nlp_es = spacy.load("es_core_news_md")
+
 
 
 def get_spacy_model(text):
@@ -146,11 +138,13 @@ def generate_game_vectors():
     return game_ids, combined_vectors
 
 
-def generate_and_save_recommendations():
+def generate_and_save_recommendations(dir_rs_data):
     """
     Genera las recomendaciones y las guarda en el archivo shelve.
     """
     try:
+        # archivos que se generan
+        archivos = [dir_rs_data+".bak", dir_rs_data+".dat", dir_rs_data+".dir"]
         # Eliminar archivos previos
         for archivo in archivos:
             if os.path.exists(archivo):
@@ -165,25 +159,25 @@ def generate_and_save_recommendations():
         similarity_matrix = cosine_similarity(vectors)
 
         print("Guardando recomendaciones en shelve...")
-        with shelve.open(DATA_RS_FILE) as db:
+        with shelve.open(dir_rs_data) as db:
             for idx, game_id in enumerate(game_ids):
                 similar_indices = similarity_matrix[idx].argsort()[::-1]
                 recommended_ids = [game_ids[i] for i in similar_indices if i != idx][:4]
                 db[str(game_id)] = recommended_ids
 
-        print(f"Recomendaciones guardadas en {DATA_RS_FILE}")
+        print(f"Recomendaciones guardadas en {dir_rs_data}")
 
     except Exception as e:
         print(f"Error inesperado: {e}")
         traceback.print_exc()
 
 
-def load_recommendations():
+def load_recommendations(dir_rs_data):
     """
     Carga las recomendaciones desde el archivo shelve.
     """
     try:
-        with shelve.open(DATA_RS_FILE) as db:
+        with shelve.open(dir_rs_data) as db:
             return {int(key): value for key, value in db.items()}
     except Exception as e:
         print(f"Error al cargar las recomendaciones: {e}")
@@ -191,11 +185,11 @@ def load_recommendations():
         return {}
 
 
-def get_recommendations_for_game(game_id, recommendations=None):
+def get_recommendations_for_game(game_id, dir_rs_data, recommendations):
     """
     Obtiene las recomendaciones para un videojuego específico.
     """
     if recommendations is None:
-        recommendations = load_recommendations()
+        recommendations = load_recommendations(dir_rs_data)
     return recommendations.get(game_id, [])
 
