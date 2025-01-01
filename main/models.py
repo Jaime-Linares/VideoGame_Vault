@@ -49,13 +49,13 @@ class Store(models.Model):
 
 # modelo para el videojuego
 class Video_game(models.Model):
-    name = models.TextField()
-    url_inf = models.URLField()
-    url_img = models.URLField()
-    price = models.FloatField(validators=[MinValueValidator(0.0)])
-    discount = models.IntegerField(validators=[MinValueValidator(0)])
-    score = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(10.0)])
-    description = models.TextField()
+    name = models.TextField(blank=False, null=False)
+    url_inf = models.URLField(null=False)
+    url_img = models.URLField(null=False)
+    price = models.FloatField(validators=[MinValueValidator(0.0)], null=False)
+    discount = models.IntegerField(validators=[MinValueValidator(0)], null=False)
+    score = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(10.0)], null=False)
+    description = models.TextField(blank=True, null=False)
     release_date = models.DateField(null=True)
     developer = models.ForeignKey(Developer, on_delete=models.CASCADE)
     genres = models.ManyToManyField(Genre)
