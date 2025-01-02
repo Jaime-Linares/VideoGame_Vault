@@ -12,6 +12,8 @@
   <img src="https://img.shields.io/badge/license-MIT-red" alt="License">
 </p>
 
+
+## Table of Contents
 - [Application Description](#application-description)
 - [Steps to Start the Project](#steps-to-start-the-project)
 - [License](#license)
