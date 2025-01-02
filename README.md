@@ -1,4 +1,4 @@
-# 🎮👾 VideoGame_Vault 👾🎮
+<h1 align="center">🎮👾 VideoGame_Vault 👾🎮</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.12-darkblue" alt="Python">
@@ -12,76 +12,76 @@
   <img src="https://img.shields.io/badge/license-MIT-red" alt="License">
 </p>
 
-- [Descripción de la aplicación](#descripción-de-la-aplicación)
-- [Pasos para iniciar el proyecto](#pasos-para-iniciar-el-proyecto)
-- [Licencia](#licencia)
+- [Application Description](#application-description)
+- [Steps to Start the Project](#steps-to-start-the-project)
+- [License](#license)
 
 
-## Descripción de la aplicación
-**Video Game Vault** es una aplicación web desarrollada con **Django** que centraliza información sobre videojuegos obtenida mediante *web scraping*. La plataforma permite explorar videojuegos, realizar búsquedas avanzadas y descubrir recomendaciones personalizadas, combinando simplicidad y potencia en un solo lugar.
+## Application Description
+**Video Game Vault** is a web application developed with **Django** that centralizes information about video games obtained through *web scraping*. The platform allows you to explore video games, perform advanced searches, and discover personalized recommendations, combining simplicity and power in one place.
 
-**Propósito:** VideoGame Vault nació como una herramienta para centralizar información sobre videojuegos y facilitar su búsqueda y descubrimiento, ideal para gamers y coleccionistas.
+**Purpose:** Video Game Vault was created as a tool to centralize video game information and facilitate their search and discovery, ideal for gamers and collectors.
 
-### Características principales:
-- **Obtención de datos:**
-  - Los videojuegos se recopilan automáticamente desde [**Instant Gaming**](https://www.instant-gaming.com/) y [**Eneba**](https://www.eneba.com/) utilizando **Beautiful Soup**.
-  - Los datos se almacenan en una base de datos y se organizan para realizar diferentes búsquedas.
+### Key Features:
+- **Data Retrieval:**
+  - Video games are automatically collected from [**Instant Gaming**](https://www.instant-gaming.com/) and [**Eneba**](https://www.eneba.com/) using **Beautiful Soup**.
+  - Data is stored in a database and organized for various searches.
 
-- **Búsquedas:**
-  - **Búsquedas sencillas:** Directamente con Django, explora videojuegos por filtros básicos como género, desarrollador, plataforma...
-  - **Búsquedas avanzadas:** Utiliza **Whoosh** para consultas más complejas, como coincidencias específicas de palabras clave.
+- **Searches:**
+  - **Simple Searches:** Directly with Django, explore video games using basic filters such as genre, developer, platform...
+  - **Advanced Searches:** Use **Whoosh** for more complex queries, such as specific keyword matches.
 
-- **Autenticación para funcionalidades avanzadas:**
-  - Algunas funcionalidades, como la carga de datos y del sistema de recomendación o las búsquedas avanzadas, están disponibles únicamente para usuarios autenticados.
+- **Authentication for Advanced Features:**
+  - Some features, such as data loading, the recommendation system, or advanced searches, are only available to authenticated users.
 
-- **Visualización detallada de videojuegos:**
-  - Consulta detalles como fecha de lanzamiento, descripción, precio, descuento, puntuación, desarrollador, géneros y plataformas.
-  - Descubre recomendaciones personalizadas basadas en similitudes con otros videojuegos.
+- **Detailed Video Game View:**
+  - View details such as release date, description, price, discount, rating, developer, genres, and platforms.
+  - Discover personalized recommendations based on similarities with other video games.
 
-- **Sistema de recomendación basado en contenido:**
-  - Basado en contenido, utiliza vectores que combinan atributos de los videojuegos.
-  - Implementado con herramientas como **spaCy** para procesar texto en lenguaje natural, **scikit-learn** para cálculos de similitud y **NumPy** para la construcción de los vectores.
+- **Content-Based Recommendation System:**
+  - Based on content, it uses vectors that combine attributes of video games.
+  - Implemented with tools like **spaCy** for natural language text processing, **scikit-learn** for similarity calculations, and **NumPy** for vector construction.
 
-### Tecnologías utilizadas:
-- **Django:** Framework principal para el desarrollo de la aplicación.
-- **Beautiful Soup:** Para la extracción de datos mediante *web scraping*.
-- **Whoosh:** Motor de búsqueda para consultas avanzadas.
-- **spaCy, scikit-learn y NumPy:** Componentes clave para el sistema de recomendación basado en contenido.
+### Technologies Used:
+- **Django:** The main framework for application development.
+- **Beautiful Soup:** For data extraction via *web scraping*.
+- **Whoosh:** Search engine for advanced queries.
+- **spaCy, scikit-learn, and NumPy:** Key components for the content-based recommendation system.
 
 
-## Pasos para iniciar el proyecto
-### Clonamos el proyecto
+## Steps to Start the Project
+### Clone the Project
 ```bash
 git clone https://github.com/Jaime-Linares/VideoGame_Vault.git
 ```
 
-### Instalación de dependencias
-Para ejecutar correctamente este proyecto, es necesario instalar las siguientes dependencias:
+### Install Dependencies
+To successfully run this project, the following dependencies need to be installed:
 
-* **Instalamos Django:**
+* **Install Django:**
 ```bash
 pip install django==5.1.1
 ``` 
-* **Instalamos beautifulsoup y un parser:**
+* **Install BeautifulSoup and a parser:**
 ```bash
 pip install beautifulsoup4==4.12.3
 ```
 ```bash
 pip install lxml
 ```
-* **Instalamos Whoosh:**
+* **Install Whoosh:**
 ```bash
 pip install whoosh==2.7.4
 ```
-* **Instalamos NumPy:**
+* **Install NumPy:**
 ```bash
 pip install numpy==2.0.0
 ```
-* **Instalamos scikit-learn:**
+* **Install scikit-learn:**
 ```bash
 pip install scikit-learn==1.5.1
 ```
-* **Instalamos spaCy y los modelos que vamos a usar:**
+* **Install spaCy and the required models:**
 ```bash
 pip install spacy==3.8.3
 ```
@@ -91,35 +91,34 @@ pip install https://github.com/explosion/spacy-models/releases/download/en_core_
 ```bash
 pip install https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.8.0/es_core_news_md-3.8.0.tar.gz
 ```
-* **Instalamos langedetect:**
+* **Install langdetect:**
 ```bash
 pip install langdetect==1.0.9
 ```
 
-### Ejecutamos las migraciones
+### Run Migrations
 ```bash
 python manage.py migrate
 ```
 
-### Arrancamos el proyecto
+### Start the Project
 ```bash
 python manage.py runserver
 ```
-* Tendrás la aplicación desplegada en [http://localhost:8000/](http://localhost:8000/)
+* The application will be available at [http://localhost:8000/](http://localhost:8000/)
 
-### Recomendaciones
-Antes de nada, te recomiendo crearte una cuenta, para que puedas cargar la base de datos y el índice de Whoosh, poder cargar el sistema de recomendación y poder realizar las búsquedas avanzadas con Whoosh.
+### Recommendations
+First, I recommend creating an account so you can load the database, the Whoosh index, the recommendation system, and perform advanced searches using Whoosh.
 
-### Vista de la aplicación
-* Aplicación recien abierta:
+### Application Preview
+* Application just opened:
 
-![Pantalla inicial](static/img/home-without-login.png) 
+![Initial Screen](static/img/home-without-login.png) 
 
-* Aplicación tras registrarse y cargas los datos y el sistema de recomendación:
+* Application after registering and loading data and the recommendation system:
 
-![Pantalla inicial](static/img/home-register-load.png) 
+![Initial Screen](static/img/home-register-load.png) 
 
 
-
-## Licencia  
-Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+## License  
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
