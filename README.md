@@ -58,6 +58,42 @@ git clone https://github.com/Jaime-Linares/VideoGame_Vault.git
 ```
 
 ### Install Dependencies
+You have two options to work: with or without a virtual environment.
+
+#### 1. Install Dependencies with virtual environment
+##### Using Linux
+* **Create the virtual environment:**
+```bash
+python3 -m venv venv
+``` 
+* **Activate the virtual environment:**
+```bash
+source venv/bin/activate
+``` 
+* **Install dependencies:**
+```bash
+pip install -r requirements.txt
+``` 
+
+##### Using Windows
+* **Create the virtual environment:**
+```bash
+python -m venv venv
+``` 
+* **Activate the virtual environment:**
+```bash
+venv\Scripts\activate
+``` 
+* **If you get an error related to script execution, you can temporarily modify the policy with:**
+```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+``` 
+* **Install dependencies:**
+```bash
+pip install -r requirements.txt
+``` 
+
+#### 2. Install Dependencies without virtual environment
 To successfully run this project, the following dependencies need to be installed:
 
 * **Install Django:**
