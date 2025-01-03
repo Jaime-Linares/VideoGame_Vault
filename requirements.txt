@@ -1,0 +1,11 @@
+django==5.1.1
+beautifulsoup4==4.12.3
+lxml
+whoosh==2.7.4
+numpy==2.0.0
+scikit-learn==1.5.1
+
+spacy==3.8.3
+langdetect==1.0.9
+en-core-web-md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0.tar.gz
+es-core-news-md @ https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.8.0/es_core_news_md-3.8.0.tar.gz
