@@ -14,12 +14,13 @@
 
 
 ## Table of Contents
-- [Application Description](#application-description)
-- [Steps to Start the Project](#steps-to-start-the-project)
+- [App Description](#application-description)
+- [Steps to Start the App](#steps-to-start-the-app)
+- [More Information about the App](#more-information-about-the-app)
 - [License](#license)
 
 
-## Application Description
+## App Description
 **Video Game Vault** is a web application developed with **Django** that centralizes information about video games obtained through *web scraping*. The platform allows you to explore video games, perform advanced searches, and discover personalized recommendations, combining simplicity and power in one place.
 
 **Purpose:** Video Game Vault was created as a tool to centralize video game information and facilitate their search and discovery, ideal for gamers and collectors.
@@ -51,7 +52,7 @@
 - **spaCy, scikit-learn, and NumPy:** Key components for the content-based recommendation system.
 
 
-## Steps to Start the Project
+## Steps to Start the App
 ### Clone the Project
 ```bash
 git clone https://github.com/Jaime-Linares/VideoGame_Vault.git
@@ -81,17 +82,16 @@ pip install -r requirements.txt
 python -m venv venv
 ``` 
 * **Activate the virtual environment:**
-```bash
-venv\Scripts\activate
-``` 
-* **If you get an error related to script execution, you can temporarily modify the policy with:**
-```bash
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-``` 
+  ```bash
+  venv\Scripts\activate
+  ```
+  - **If you get an error related to script execution, you can temporarily modify the policy with:**
+    ```bash
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    ```
 * **Install dependencies:**
-```bash
-pip install -r requirements.txt
-``` 
+  ```bash
+  pip install -r requirements.txt
 
 #### 2. Install Dependencies without virtual environment
 To successfully run this project, the following dependencies need to be installed:
@@ -156,6 +156,10 @@ First, I recommend creating an account so you can load the database, the Whoosh 
 * Application after registering and loading data and the recommendation system:
 
 ![Initial Screen](static/img/home-register-load.png) 
+
+
+## More Information about the App
+If you want to have more knowledge about the functionality of the app and how each technology is used, you can consult the documentation found in [docs](https://github.com/Jaime-Linares/VideoGame_Vault/tree/master/docs) folder.
 
 
 ## License  
