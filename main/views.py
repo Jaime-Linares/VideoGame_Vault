@@ -102,11 +102,12 @@ def show_all_video_games(request):
 # utilizando el SR basado en contenido
 def show_video_game(request, video_game_id):
     global recommendations
-    video_games_recommended = None
+    video_games_recommended = []
     video_game = get_object_or_404(Video_game, pk=video_game_id)
     # obtener las recomendaciones para el videojuego
     recommended_ids = get_recommendations_for_game(video_game_id, DIR_RS_DATA, recommendations)
-    video_games_recommended = Video_game.objects.filter(id__in=recommended_ids)
+    if recommended_ids:
+        video_games_recommended = Video_game.objects.filter(id__in=recommended_ids)
 
     return render(request, 'video_game.html', {'video_game':video_game, 'video_games_recommended':video_games_recommended})
 
