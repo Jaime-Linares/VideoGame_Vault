@@ -1,3 +1,4 @@
+# encoding:utf-8
 import os, traceback, shelve, spacy
 from main.models import Video_game, Genre, Plataform, Developer
 import numpy as np

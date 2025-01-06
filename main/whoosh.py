@@ -1,3 +1,4 @@
+# encoding:utf-8
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser, MultifieldParser, OrGroup
 from main.models import Video_game

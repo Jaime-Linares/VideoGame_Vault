@@ -1,3 +1,4 @@
+# encoding:utf-8
 from django.shortcuts import render, get_object_or_404
 from main.models import Developer, Genre, Plataform, Store, Video_game
 from django.contrib.auth import authenticate, login, logout
